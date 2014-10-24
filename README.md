@@ -4,7 +4,7 @@ Boilerplate for ExpressJS
 
 * Routes directory
 * Hogan-Express template engine (w/ layouts)
-* MongoDB (coming soon)
+* MongoDB
 
 
 ### Getting started w/ local development server
