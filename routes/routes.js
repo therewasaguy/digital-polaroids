@@ -66,7 +66,7 @@ exports.savePhotoToDb = function(req,res){
 	var netId = req.body.userId;
 	var filename = new Date().getTime().toString()+ '.gif' // for now, file name is just the time stamp
 	var mimeType = 'image/gif';
-	var filepath = "tmp/"+filename; // will write file to tmp folder below
+	var filepath = "temp/"+filename; // will write file to temp folder below
 	var originalGif = req.body.image_gif;
 
 	// make it into a proper gif that we can save to db
