@@ -6,7 +6,7 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var mongoose = require('mongoose');
+var mongoose = require('mongoose-q')(require('mongoose')); // convenience methods for Q with mongoose. see https://github.com/iolo/mongoose-q
 
 
 // the ExpressJS App
@@ -45,9 +45,13 @@ app.configure('development', function(){
 
 // ROUTES
 
-var routes = require('./routes/index.js');
+var routes = require('./routes/routes.js');
 
 app.get('/', routes.index);
+app.get('/add', routes.add);
+app.post('/add', routes.savePhotoToDb);
+
+app.get('/createUsers', routes.createUsers);
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){

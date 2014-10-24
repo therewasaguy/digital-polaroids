@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 var PersonSchema = new Schema({
 	netId: String,
 	name: {firstName: String, lastName: String},
+	year: String,
 	description: String,
 	photo: String, // url at amazon s3
 	sound: String, // url at amazon s3

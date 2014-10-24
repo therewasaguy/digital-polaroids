@@ -1,13 +1,58 @@
-
-
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-
-
-
-
-
+html,body {min-height:100%;}
+body{color: #fff;}
+#portrait-holder{width:800px;height:600px;margin:0 auto;position:relative;}
+#video,#gifContainer{
+	width: 640px;
+	height: 480px;
+	background-color: #000;
+	color: #fff;
+	text-align: center;
+	position: absolute;
+	top: 125px;
+	left: 82px;
+	z-index: -1;
+}
+#capture,#save,#gifContainer,#reRecord,#counter,#progressHolder,#done{display: none;}
+#capture,#save,#reRecord,#done{
+	position: absolute;
+	bottom: 0;
+}
+#capture{left: 333px;}
+#save,#done{left:260px;}
+#reRecord{left: 425px;}
+#counter{
+	font-size: 30px;
+	position: absolute;
+	top: 148px;
+	right: 112px;
+	border-radius: 50%;
+	background-color: #e74c3c;
+	opacity: 0.9;
+	padding: 23px 35px;
+}
+.alert-warning{width: 60%;margin: 0 auto;background-color:#e0af2f;margin-top: 195px;}
+#frame{width:100%;}
+.btn{color:#fff;}
+.btn-success{background-color: #18bc9c;}
+.btn-warning{background-color:#e0af2f;}
+.progress{
+	position: absolute;
+	top: 130px;
+	left: 110px;
+	display: block;
+	width: 590px;
+	margin-bottom: 0px;
+	border-radius: 1px;
+}
+#loader {
+	display: none;
+	background-color: rgba(31,31,31,0.95);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
 
 
 

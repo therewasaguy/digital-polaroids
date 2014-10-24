@@ -1,0 +1,25 @@
+<style>
+body{background: url('./img/bg.png') repeat}
+</style>
+<div id="portrait-holder">
+	<img id="frame" src="/img/frame.png" >
+		<div id="video">
+			<div id="webcam-alert" class="alert alert-dismissable alert-warning">
+				<h4>Please enable your Webcam!</h4>
+				<p>Otherwise our magic cannot work here.</p>
+		    </div>
+		</div>
+		<div id="gifContainer"></div>
+		<button class="btn btn-warning" id="capture">Record Your Portrait</button>
+		<button class="btn btn-success" id="save">Save Your Portrait</button>
+		<button class="btn btn-success" id="done">I'm Done Here</button>
+		<button class="btn btn-warning" id="reRecord">Or, Try Again</button>
+		<p id="counter">10</p>
+		<div class="progress" id="progressHolder">
+      		<div id="progressBar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+      	</div>
+    </div>
+	</div>
+</div>
+<div id="loader"></div>
+		
