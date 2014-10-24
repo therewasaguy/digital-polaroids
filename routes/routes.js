@@ -63,7 +63,7 @@ exports.add = function(req,res){
 exports.savePhotoToDb = function(req,res){
 	console.log('saving gif to db');
 
-	var userId = req.body.userId;
+	var netId = req.body.userId;
 	var filename = new Date().getTime().toString()+ '.gif' // for now, file name is just the time stamp
 	var mimeType = 'image/gif';
 	var filepath = "tmp/"+filename; // will write file to tmp folder below
@@ -86,7 +86,7 @@ exports.savePhotoToDb = function(req,res){
 	    // ACL == Should it be public? Private?
 	    // ContentType == MimeType of file ie. image/jpeg.
 	    var params = {
-	      Key: filename+'.gif',
+	      Key: filename,
 	      Body: file_buffer,
 	      ACL: 'public-read',
 	      ContentType: mimeType
@@ -100,14 +100,14 @@ exports.savePhotoToDb = function(req,res){
 	          console.log("Successfully uploaded data to s3 bucket");
 
 	          // add or update user image
-	          var dataToSave = {photo: process.env.AWS_S3_PATH + filename}
+	          var dataToSave = {photo: process.env.AWS_S3_PATH + filename};
 
 	          // // TODO - we shouldn't hard code the url like this, but instead should get a temp URL dynamically using aws-sdk
 	          // // i.e. every time there's a request, at that point we get the temp URL by requesting the filename
 	          // // see 'getObject' at http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-examples.html
 
 	          // now update the user
-	          Person.findByIdAndUpdateQ(userId, { $set: dataToSave})
+	          Person.findOneAndUpdateQ({netId:netId}, { $set: dataToSave})
 	          .then(function(response){
 	            console.log('user updated! ' + response);
 	            res.json({status:'success'}); 
@@ -144,7 +144,10 @@ exports.createUsers = function(req,res){
          	year: year
          }
 
-         Person.saveQ(dataToSave)
+         var person = Person(dataToSave);
+
+         // save the person to db
+         person.saveQ()
 		 .then(function (response){ 
 		 	console.log(response);
 		  })

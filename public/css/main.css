@@ -12,11 +12,8 @@ body{color: #fff;}
 	left: 82px;
 	z-index: -1;
 }
-#capture,#save,#gifContainer,#reRecord,#counter,#progressHolder,#done{display: none;}
-#capture,#save,#reRecord,#done{
-	position: absolute;
-	bottom: 0;
-}
+#capture,#save,#gifContainer,#reRecord,#counter,#progressHolder,#done,#userId{display: none;}
+#capture,#save,#reRecord,#done{position: absolute;bottom: 0;}
 #capture{left: 333px;}
 #save,#done{left:260px;}
 #reRecord{left: 425px;}
@@ -46,7 +43,7 @@ body{color: #fff;}
 }
 #loader {
 	display: none;
-	background-color: rgba(31,31,31,0.95);
+	background-color: rgba(255,255,255,0.95);
 	width: 100%;
 	height: 100%;
 	position: absolute;
@@ -54,10 +51,15 @@ body{color: #fff;}
 	left: 0;
 }
 
-
-
-
-
+#loader img{
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    width:500px;
+    height:270px;
+    margin-top: -135px; /*set to a negative number 1/2 of your height*/
+    margin-left: -250px; /*set to a negative number 1/2 of your width*/
+}
 
 
 

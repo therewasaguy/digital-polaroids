@@ -57,7 +57,8 @@ function init() {
 				document.getElementById('counter').style.display = 'none';
 				document.getElementById('progressHolder').style.display = 'none';
 				document.getElementById('capture').style.display = 'none';
-				document.getElementById('loader').style.display = 'block';				
+				document.getElementById('loader').style.display = 'block';
+				document.getElementById('video').style.display = 'none';				
 			}
 		});
 
@@ -116,7 +117,8 @@ function init() {
   	if(gifContainer.childElementCount > 0) gifContainer.removeChild(gifContainer.lastChild);
   	document.getElementById('gifContainer').style.display = "none";
 	document.getElementById('save').style.display = "none";
-	document.getElementById('reRecord').style.display = "none";  	
+	document.getElementById('reRecord').style.display = "none";  
+	document.getElementById('done').style.display = "none"; 	
   	document.getElementById('video').style.display = "block";
   	document.getElementById('capture').style.display = "block";
 
@@ -131,12 +133,16 @@ function init() {
 window.addEventListener('DOMContentLoaded', init);
 
 function postGif (){
-	var gif = $('#generatedGif').attr('src');
 	document.getElementById('loader').style.display = 'block';
+
+	var gif = $('#generatedGif').attr('src');
+	var userDiv = document.getElementById('userId');
+	var userId = userDiv.getAttribute('data-userId');
+
 	$.ajax({
 	  type:"POST",
 	  url: "/add",
-	  data: {image_gif:gif},
+	  data: {image_gif:gif,userId:userId},
 	  success: function (response) {
 	    document.getElementById('loader').style.display = 'none';
 	    document.getElementById('save').style.display = 'none';

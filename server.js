@@ -51,7 +51,8 @@ app.get('/', routes.index);
 app.get('/add', routes.add);
 app.post('/add', routes.savePhotoToDb);
 
-app.get('/createUsers', routes.createUsers);
+// call to create users in the DB from a CSV
+//app.get('/createUsers', routes.createUsers);
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){
