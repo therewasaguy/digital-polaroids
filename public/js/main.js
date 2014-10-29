@@ -6,11 +6,14 @@ function init() {
 	var videoElement;
 	var shooter;
 
+	// add event listners
 	window.addEventListener('resize', onResize);
 	document.getElementById('capture').addEventListener('click', startGifCapture);
 	document.getElementById('save').addEventListener('click', postGif);
 	document.getElementById('reRecord').addEventListener('click',reStart); 
 	document.getElementById('done').addEventListener('click',reLoad); 
+	document.getElementById('netId').addEventListener('change', submitId);
+	document.getElementById('descButton').addEventListener('click',submitDescription);
 
 	GumHelper.startVideoStreaming(function(error, stream, videoEl, width, height) {
 		if(error) {
@@ -44,7 +47,6 @@ function init() {
 
 			// disable capture button and show it recording
 			document.getElementById('capture').style.pointerEvents = "none";
-			document.getElementById('capture').style.backgroundColor = "#e74c3c";
 			document.getElementById('capture').innerHTML = "We're recording...";
 			
 			if((progress*100)%1 === 0){
@@ -116,9 +118,9 @@ function init() {
   function reStart(){
   	if(gifContainer.childElementCount > 0) gifContainer.removeChild(gifContainer.lastChild);
   	document.getElementById('gifContainer').style.display = "none";
-	document.getElementById('save').style.display = "none";
-	document.getElementById('reRecord').style.display = "none";  
-	document.getElementById('done').style.display = "none"; 	
+		document.getElementById('save').style.display = "none";
+		document.getElementById('reRecord').style.display = "none";  
+		document.getElementById('done').style.display = "none"; 	
   	document.getElementById('video').style.display = "block";
   	document.getElementById('capture').style.display = "block";
 
@@ -141,12 +143,55 @@ function postGif (){
 
 	$.ajax({
 	  type:"POST",
-	  url: "/add",
+	  url: "/api/add/photo",
 	  data: {image_gif:gif,userId:userId},
 	  success: function (response) {
 	    document.getElementById('loader').style.display = 'none';
 	    document.getElementById('save').style.display = 'none';
 	    document.getElementById('done').style.display = 'block';
+	  }
+	});
+}
+
+function submitId(){
+	var netId = $('#netId').val()
+
+	$.ajax({
+	  type:"GET",
+	  url: "/api/user/"+netId,
+	  success: function (response) {
+	  	if(response.status == 'failed'){
+	  		document.getElementById('alertMsg').style.display = 'block';
+	  		return;
+	  	}
+	  	// set the id on the page
+	  	document.getElementById('userId').setAttribute('data-userId', response.user.netId);
+	  	// hide id field, show description field
+	  	document.getElementById('netId').style.display = 'none';
+	  	document.getElementById('alertMsg').style.display = 'none';
+	  	document.getElementById('desc-holder').style.top = '25%';
+	  	document.getElementById('description-holder').style.display = 'block';
+	  	document.getElementById('description').focus();
+	  	document.getElementById('userName').innerHTML = 'Hi, ' + response.user.name.firstName + " " + response.user.name.lastName + "!";
+	  },
+	  failure: function (response){
+	  	document.getElementById('alertMsg').style.display = 'block';
+	  }
+	});	
+}
+
+function submitDescription (){
+
+	var description = $('#description').val()
+	var userDiv = document.getElementById('userId');
+	var userId = userDiv.getAttribute('data-userId');
+
+	$.ajax({
+	  type:"POST",
+	  url: "/api/add/description",
+	  data: {description:description,userId:userId},
+	  success: function (response) {
+	  	document.getElementById('welcome').style.display = 'none';
 	  }
 	});
 }

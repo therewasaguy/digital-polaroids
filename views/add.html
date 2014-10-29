@@ -1,8 +1,5 @@
-<style>
-body{background: url('./img/bg.png') repeat}
-</style>
 <div id="portrait-holder">
-	<img id="frame" src="/img/frame.png" >
+	<img class="frame" src="/img/frame.png" >
 		<div id="video">
 			<div id="webcam-alert" class="alert alert-dismissable alert-warning">
 				<h4>Please enable your Webcam!</h4>
@@ -14,15 +11,55 @@ body{background: url('./img/bg.png') repeat}
 		<button class="btn btn-success" id="save">Save Your Portrait</button>
 		<button class="btn btn-success" id="done">I'm Done Here</button>
 		<button class="btn btn-warning" id="reRecord">Or, Try Again</button>
-		<p id="counter">10</p>
+		<p id="counter">9</p>
 		<div class="progress" id="progressHolder">
       		<div id="progressBar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
       	</div>
     </div>
+
+		<div id="welcome">
+			<div class="input-holder" id="desc-holder">
+				<div class="col-lg-10">
+					<input type="text" class="form-control" name="netId" id="netId" placeholder="Enter Your NetId" autofocus>
+					<label class='alert' id='alertMsg'>Couldn't find that netId</label>
+					<div id="description-holder">
+		      	<span class="help-block"><span id="userName"></span>
+		      	<br/>Tell us something random, non-random, or whatever.</span>
+		      	<textarea class="form-control" rows="4" name="description" id="description" placeholder="Describe yourself quickly..." maxlength="100" autofocus></textarea>
+		      	<button class="btn btn-success" id="descButton">Continue to Your Portrait</button>
+		      </div>
+				</div>
+		  </div>
+		</div>
+	</div>
+
+</div>
+
+<div id="portrait2">
+	<img class="frame" src="/img/frame.png" >
+	<img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1414598776220.gif" >
+</div>
+
+<div id="portrait3">
+	<img class="frame" src="/img/frame.png" >
+	<img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1414176903720.gif" >
+</div>
+
+<div id="portrait4">
+	<img class="frame" src="/img/frame.png" >
+	<img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1414437380389.gif" >
+</div>
+
+<div id="portrait5">
+	<img class="frame" src="/img/frame.png" >
+	<img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1414432816988.gif" >
+</div>
+
+<div id="loader">
+	<div class="holder">
+		<img src="/img/gif-default.gif">
+		<span class="help-block">processing...</span>
 	</div>
 </div>
-<div id="loader">
-	<img src="/img/loading.gif">
-</div>
-<div id='userId' data-userId='kw1213'></div>
+<div id='userId' data-userId=''></div>
 		

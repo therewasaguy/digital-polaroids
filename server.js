@@ -49,7 +49,11 @@ var routes = require('./routes/routes.js');
 
 app.get('/', routes.index);
 app.get('/add', routes.add);
-app.post('/add', routes.savePhotoToDb);
+app.post('/api/add/photo', routes.savePhotoToDb);
+app.post('/api/add/description', routes.saveDescriptionToDb);
+
+app.get('/api/user/:id', routes.getUser);
+app.get('/api/get/users', routes.getUsers);
 
 // call to create users in the DB from a CSV
 //app.get('/createUsers', routes.createUsers);
@@ -58,16 +62,3 @@ app.post('/add', routes.savePhotoToDb);
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
-
-
-
-
-
-
-
-
-
-
-
-
-

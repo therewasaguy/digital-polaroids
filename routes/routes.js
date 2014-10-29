@@ -60,6 +60,25 @@ exports.add = function(req,res){
 	res.render('add.html',viewData);
 }
 
+exports.saveDescriptionToDb = function(req,res){
+
+	var netId = req.body.userId;
+	var description = req.body.description;
+
+  // now update the user
+  Person.findOneAndUpdateQ({netId:netId}, { $set: {description:description}})
+  .then(function(response){
+    console.log('user updated! ' + response);
+    res.json({status:'success'}); 
+  })
+  .fail(function (err) { 
+  	console.log('error in updating user! ' + err)
+  	res.json(err); 
+  })
+  .done();	
+
+}
+
 exports.savePhotoToDb = function(req,res){
 	console.log('saving gif to db');
 
@@ -123,6 +142,78 @@ exports.savePhotoToDb = function(req,res){
 
 	    });
 	});
+}
+
+exports.getUser = function(req,res){
+	var netId = req.param('id');
+
+  Person.findOneQ({netId:netId})
+  .then(function(response){
+  	if (response == null) var dataToReturn = {status: 'failed'};
+  	else {
+	  	var dataToReturn = {
+	  		user: response,
+	  		status: 'success'
+	  	}
+	  }
+    res.json(dataToReturn); 
+  })
+  .fail(function (err) { 
+  	var dataToReturn = {
+  		status: 'failed'
+  	}
+    res.json(dataToReturn);
+  })
+  .done();	
+}
+
+// gets the users and chooses 9 at random
+// this works because the dataset is small. would need a better way to get random docs if a larger dataset
+exports.getUsers = function(req,res){
+
+	console.log('getting users');
+
+	Person.findQ()
+	.then(function(response){
+		// choose 9 at random
+		var ranNumArray = new Array();
+		for(var i=0;i<9;i++){
+			ranNumArray.push(getRanNum());
+		}
+
+		// get a random number, ensuring there are no duplicates
+		function getRanNum(){
+			 // get a random number between 0 and the document array length 
+			 var ranNum = Math.floor((Math.random() * response.length) + 0);
+			 // if ranNum is already in the array of chosen numbers, getRanNum again
+			 if (checkDuplicates(ranNum,ranNumArray)) getRanNum(); // if duplicated, calls the function again
+			 else return ranNum;
+		}	
+
+		function checkDuplicates(num,arr){
+			for(var i=0;i<arr.length;i++){
+				if(num == arr[i]) {
+					return true;
+					break;
+				}
+			}
+			return false;
+		}
+
+		// move on to returning the data
+		var arrayToReturn = new Array();
+		for(var i=0;i<ranNumArray.length;i++){
+			arrayToReturn.push(response[ranNumArray[i]]);
+		}
+		var dataToReturn = {'students': arrayToReturn};
+		//respond back with the data
+  	res.json(dataToReturn);
+  })
+  .fail(function (err) { 
+  	var dataToReturn = {status: 'failed'}
+    res.json(dataToReturn);
+  })
+  .done();	
 }
 
 exports.createUsers = function(req,res){
