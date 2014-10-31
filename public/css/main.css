@@ -146,7 +146,7 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 	background-size: cover;
 	border: 2px solid #b85252;
 }
-.frame{
+.addFrame{
 	width:100%;
 	pointer-events: none;
 }
@@ -275,5 +275,160 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 
 @media (max-width: 1345px){
 	#portrait2,#portrait3,#portrait4,#portrait5{display: none;}
+}
 
+/*FRAME SIZE & POSITIONING*/
+#home-wrapper .frame{
+	position:absolute;
+}
+
+.topLeft{
+	top:0;
+	left:0;
+}
+
+.topRight{
+	top:0;
+	right:0;
+}
+
+.bottomLeft{
+	bottom:0;
+	left:0;
+}
+
+.bottomRight{
+	bottom:0;
+	right:0;
+}
+
+/* Desktops and laptops ----------- */
+@media only screen and (min-width : 1224px) {
+
+/*GRID SYSTEM*/
+
+#home-wrapper{
+	width:1224px;
+	margin:0 auto;
+}
+
+.grid{
+	width:408px;
+	height:306px;
+	float:left;
+	position: relative;
+}
+
+
+
+.pullLeft{
+	left:-30px;
+}
+
+.pullRight{
+	right:-30px;
+}
+
+.pullUp{
+	top:-30px;
+}
+.pullDown{
+	bottom:-30px;
+}
+
+.shrink90{
+	-ms-transform: scale(0.9,0.9); 
+	-webkit-transform: scale(0.9,0.9); 
+	transform: scale(0.9,0.9); 
+}
+
+.shrink80{
+	-ms-transform: scale(0.8,0.8); 
+	-webkit-transform: scale(0.8,0.8); 
+	transform: scale(0.8,0.8); 
+}
+
+.rotCW{
+	-ms-transform: rotate(1deg); 
+    -webkit-transform: rotate(1deg); 
+    transform: rotate(1deg);
+}
+
+.rotCC{
+	-ms-transform: rotate(-1deg); 
+    -webkit-transform: rotate(-1deg); 
+    transform: rotate(-1deg);
+}
+
+
+
+/*GIF POSITIONING*/
+
+.gif{
+	width:280px;
+	height:210px;
+	background-color: #888;
+	position: absolute;
+	-webkit-box-shadow: inset 10px 10px 15px 2px rgba(0,0,0,0.50);
+	-moz-box-shadow: inset 10px 10px 15px 2px rgba(0,0,0,0.50);
+	box-shadow: inset 10px 10px 15px 2px rgba(0,0,0,0.50);
+	z-index: -100;
+}
+
+
+.f01{
+	top:46px;
+	left:47px;
+}
+
+.f02{
+	top:33px;
+	left:37px;
+}
+
+.f03{
+	top:48px;
+	left:60px;
+}
+
+.f04{
+	top:34px;
+	left:40px;
+}
+
+.f05{
+	top:36px;
+	left:32px;
+}
+
+.f06{
+	top:43px;
+	left:48px;
+}
+
+.f07{
+	top:48px;
+	left:54px;
+}
+
+.f08{
+	top:41px;
+	left:46px;
+}
+
+.f09{
+	top:35px;
+	left:32px;
+}
+
+.img{
+	z-index: 100;
+}
+
+
+
+}
+
+/* Large screens ----------- */
+@media only screen and (min-width : 1824px) {
 }
