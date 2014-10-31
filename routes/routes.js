@@ -175,6 +175,7 @@ exports.getUsers = function(req,res){
 
 	Person.findQ()
 	.then(function(response){
+
 		// choose 9 at random
 		var ranNumArray = new Array();
 		for(var i=0;i<9;i++){

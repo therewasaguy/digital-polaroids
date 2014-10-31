@@ -3,12 +3,14 @@
 			var data = $.getJSON( "/api/get/users", function( data ) {
 				var students = data.students;
 				for(var i =0; i<students.length; i++){
-					var firstName = data.students[i].name.firstName;
-					var lastName = data.students[i].name.lastName;
-					var photo = data.students[i].photo;
-					var gif = document.getElementById(i);
-					gif.style.background="url("+photo+") no-repeat";
-					gif.style.backgroundSize="cover";
+					if(data.students[i] != null){
+						var firstName = data.students[i].name.firstName;
+						var lastName = data.students[i].name.lastName;
+						var photo = data.students[i].photo;
+						var gif = document.getElementById(i);
+						gif.style.background="url("+photo+") no-repeat";
+						gif.style.backgroundSize="cover";
+					}
 				}	
 
 			});
@@ -41,14 +43,15 @@
 			var data = $.getJSON( "/api/get/users", function( data ) {
 				var students = data.students;
 				for(var i =0; i<students.length; i++){
-					var firstName = data.students[i].name.firstName;
-					var lastName = data.students[i].name.lastName;
-					var photo = data.students[i].photo;
-					//console.log(photo);
-					var gif = document.getElementById(i);
-					gif.style.background="url("+photo+") no-repeat";
-					gif.style.backgroundSize="cover";
-				}	
+					if(data.students[i] != null){
+						var firstName = data.students[i].name.firstName;
+						var lastName = data.students[i].name.lastName;
+						var photo = data.students[i].photo;
+						var gif = document.getElementById(i);
+						gif.style.background="url("+photo+") no-repeat";
+						gif.style.backgroundSize="cover";
+					}
+				}
 
 			});
 		};
