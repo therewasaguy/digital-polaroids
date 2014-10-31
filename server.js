@@ -43,6 +43,21 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+/**
+ * CORS support.
+ */
+
+app.all('*', function(req, res, next){
+  if (!req.get('Origin')) return next();
+  // use "*" here to accept any origin
+  res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.set('Access-Control-Allow-Methods', 'PUT');
+  res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+  // res.set('Access-Control-Allow-Max-Age', 3600);
+  if ('OPTIONS' == req.method) return res.send(200);
+  next();
+});
+
 // ROUTES
 
 var routes = require('./routes/routes.js');
@@ -55,8 +70,15 @@ app.post('/api/add/description', routes.saveDescriptionToDb);
 app.get('/api/user/:id', routes.getUser);
 app.get('/api/get/users', routes.getUsers);
 
+// TESTING / UTILITY ROUTES - not used in production //
+
 // call to create users in the DB from a CSV
-//app.get('/createUsers', routes.createUsers);
+//app.get('/onlysamshoulddothis/createUsers', routes.createUsers);
+
+// call to add photos for all users, for testing purposes
+//app.get('/onlysamshoulddothis/addPhotos', routes.addPhotos);
+// call to clear all photos for all users, for testing purposes
+//app.get('/onlysamshoulddothis/deletePhotos', routes.deletePhotos)
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){

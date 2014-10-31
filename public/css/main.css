@@ -42,7 +42,7 @@
 	font-style: normal;
 }
 
-html,body {height:100%;background: url('http://38.media.tumblr.com/09f891f1b725434ef507b2089e1018bf/tumblr_mk6r1c6wmr1qcdtsho1_1280.jpg') repeat}}
+html,body {height:100%;background: url('../img/bg.jpg') repeat}}
 body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 	color: #404040;
 	font-family:'museo_sans_rounded300',"Helvetica Neue",Helvetica,Arial,sans-serif;

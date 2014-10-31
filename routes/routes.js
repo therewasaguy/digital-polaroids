@@ -216,6 +216,78 @@ exports.getUsers = function(req,res){
   .done();	
 }
 
+//// TESTING / UTILITY ROUTES - not used in production //
+
+exports.addPhotos = function(req,res){
+
+	var gifList = ['https://s3.amazonaws.com/digitalpolaroids/1414603562424.gif',
+	'https://s3.amazonaws.com/digitalpolaroids/1414602635356.gif',
+	'https://s3.amazonaws.com/digitalpolaroids/1414437551984.gif',
+	'https://s3.amazonaws.com/digitalpolaroids/1414598776220.gif',
+	'https://s3.amazonaws.com/digitalpolaroids/1414176903720.gif',
+	'https://s3.amazonaws.com/digitalpolaroids/1414437380389.gif',
+	'https://s3.amazonaws.com/digitalpolaroids/1414432816988.gif'];
+
+
+	Person.find(function(err,data){
+
+		for(var i=0;i<data.length;i++){
+			var ranNum = Math.floor((Math.random() * (gifList.length)) + 0);
+		  var dataToSave = {photo: gifList[ranNum],description: 'My name is '+data[i].name.firstName+' and this is just a random description for testing purposes!'};
+
+		    Person.update({_id:data[i]._id},{$set: dataToSave}, function (err,data) {
+		        if (err) {
+		            console.log(err);
+		        }
+		        else {
+		        	console.log(data);
+		        }
+			});
+		}
+
+		console.log('done');
+	});
+
+  // for (var i=0;i<233;i++){
+		// var ranNum = Math.floor((Math.random() * (gifList.length)) + 0);
+	 //  var dataToSave = {photo: gifList[ranNum],description: 'just a random description for testing purposes!'};
+
+	 //    Person.update({},{$set: dataToSave},{multi: false}, function (err,data) {
+	 //        if (err) {
+	 //            console.log(err);
+	 //        }
+	 //        else {
+	 //        	console.log(data);
+	 //        }
+	 //    })
+	  // Person.updateQ({$set: dataToSave})
+	  // .then(function(response){
+	  // 	console.log(response);
+	  // 	//res.json(response);
+	  // })
+	  // .fail(function (err) { 
+	  // 	console.log('error in updating user! ' + err)
+	  // })
+	  // .done();
+	// }
+
+
+ //  	// now loop through and update them all
+ //  for(var i=0;i<personList.length;i++){
+	// 	var ranNum = Math.floor((Math.random() * (gifList.length)) + 0);
+	//   var dataToSave = {photo: gifList[ranNum],description: 'just a random description for testing purposes!'};  	
+ //  	Person.findOneAndUpdateQ({_id:personList[i]._id}, { $set: dataToSave})
+ //  	.then(function(response){
+ //  		console.log('updated person: '+response);
+ //  	})
+	//   .fail(function (err) { 
+	//   	console.log('error in updating user! ' + err)
+	//   })
+	//   .done();
+	// }
+}
+
+
 exports.createUsers = function(req,res){
 	
 	var csv = require('fast-csv');
@@ -239,14 +311,14 @@ exports.createUsers = function(req,res){
 
          // save the person to db
          person.saveQ()
-		 .then(function (response){ 
-		 	console.log(response);
-		  })
-		  .fail(function (err) { console.log(err); })
-		  .done();         
-    })
-    .on("end", function(){
-         console.log("done");
+				 .then(function (response){ 
+				 	console.log(response);
+				  })
+				  .fail(function (err) { console.log(err); })
+				  .done();         
+		    })
+	    .on("end", function(){
+	         console.log("done");
     });
 
     stream.pipe(csvStream);
