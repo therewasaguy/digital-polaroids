@@ -1,5 +1,7 @@
 function init() {
 
+	preparePortraits();
+
 	var videoContainer = document.getElementById('video');
 	var gifContainer = document.getElementById('gifContainer');
 	var videoWidth= 0, videoHeight = 0;
@@ -194,4 +196,19 @@ function submitDescription (){
 	  	document.getElementById('welcome').style.display = 'none';
 	  }
 	});
+}
+
+function preparePortraits(){
+
+		var data = $.getJSON( "/api/get/users/4", function( data ) {
+			var students = data.students;
+			for(var i =0; i<students.length; i++){
+				if(data.students[i] != null){
+					var photo = data.students[i].photo;
+					var gif = $("#portrait"+i).find(".small-portrait");
+					gif.attr( "src", photo);
+				}
+			}	
+
+		});	
 }

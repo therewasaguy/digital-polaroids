@@ -68,7 +68,7 @@ app.post('/api/add/photo', routes.savePhotoToDb);
 app.post('/api/add/description', routes.saveDescriptionToDb);
 
 app.get('/api/user/:id', routes.getUser);
-app.get('/api/get/users', routes.getUsers);
+app.get('/api/get/users/:num', routes.getUsers);
 
 // TESTING / UTILITY ROUTES - not used in production //
 

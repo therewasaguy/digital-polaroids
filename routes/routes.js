@@ -171,14 +171,16 @@ exports.getUser = function(req,res){
 // this works because the dataset is small. would need a better way to get random docs if a larger dataset
 exports.getUsers = function(req,res){
 
-	console.log('getting users');
+	var requestNum = req.param('num');
 
-	Person.findQ()
+	console.log('getting '+requestNum+' users');
+
+	Person.findQ({ photo: {$exists: true}})
 	.then(function(response){
 
 		// choose 9 at random
 		var ranNumArray = new Array();
-		for(var i=0;i<9;i++){
+		for(var i=0;i<requestNum;i++){
 			ranNumArray.push(getRanNum());
 		}
 
@@ -188,6 +190,7 @@ exports.getUsers = function(req,res){
 			 var ranNum = Math.floor((Math.random() * response.length) + 0);
 			 // if ranNum is already in the array of chosen numbers, getRanNum again
 			 if (checkDuplicates(ranNum,ranNumArray)) getRanNum(); // if duplicated, calls the function again
+			 if (!response[ranNum] || response[ranNum] == 'null') getRanNum(); // if null, calls the function again
 			 else return ranNum;
 		}	
 
@@ -203,7 +206,7 @@ exports.getUsers = function(req,res){
 
 		// move on to returning the data
 		var arrayToReturn = new Array();
-		for(var i=0;i<ranNumArray.length;i++){
+		for(var i=0;i<requestNum;i++){
 			arrayToReturn.push(response[ranNumArray[i]]);
 		}
 		var dataToReturn = {'students': arrayToReturn};
