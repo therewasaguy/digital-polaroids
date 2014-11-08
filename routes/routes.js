@@ -25,29 +25,20 @@ var s3 = new AWS.S3();
 /*
 	GET /
 */
-exports.index = function(req, res) {
+exports.get12 = function(req, res) {
 	
-	console.log("main page requested");
-
-	// query for all people in the db, return their name and slug
-	Person.find({}, 'name slug', function(err, data){
-
-		if (err) {
-			res.send("Unable to query database for people").status(500);
-		};
-
-		console.log("retrieved " + data.length + " people from database");
-
-		//build and render template
 		var viewData = {
-			people : data,
-			pageTitle : "Some Title"
-		}
+			pageTitle : "ITPortraits"
+		}	
+	res.render('12frame.html', viewData);
 
-		res.render('index.html', viewData);
+}
 
-	});
-
+exports.get9 = function (req,res){
+		var viewData = {
+			pageTitle : "ITPortraits"
+		}	
+	res.render('9frame.html', viewData);
 }
 
 exports.add = function(req,res){
