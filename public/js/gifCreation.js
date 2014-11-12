@@ -164,6 +164,7 @@ function submitId(){
 	  success: function (response) {
 	  	if(response.status == 'failed'){
 	  		document.getElementById('alertMsg').style.display = 'block';
+	  		document.getElementById('welcome').style.zIndex ='0';
 	  		return;
 	  	}
 	  	// set the id on the page
@@ -171,6 +172,7 @@ function submitId(){
 	  	// hide id field, show description field
 	  	document.getElementById('netId').style.display = 'none';
 	  	document.getElementById('alertMsg').style.display = 'none';
+	  	document.getElementById('welcome').style.zIndex ='-1';
 	  	document.getElementById('desc-holder').style.top = '25%';
 	  	document.getElementById('description-holder').style.display = 'block';
 	  	document.getElementById('description').focus();

@@ -8,7 +8,7 @@ $(document).ready(function(){
 	$.when(resetImage()).done(generateTimeline());	
 
 function setFeatureStudent(){
-	$.getJSON( "http://digitalpolaroids.herokuapp.com/api/get/users/1", function( data ) {
+	$.getJSON( "/api/get/users/1", function( data ) {
 
 			if(data.students[0]!= null){
 				var firstName = data.students[0].name.firstName;
@@ -34,7 +34,7 @@ function resetImage() {
 	//for local testing
 	killFlip();
 	
-	$.getJSON( "http://digitalpolaroids.herokuapp.com/api/get/users/12", function( data ) {
+	$.getJSON( "/api/get/users/12", function( data ) {
 		var students = data.students;
 		for(var i =0; i<students.length; i++){
 			if(students[i] != null){
