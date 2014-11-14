@@ -8,6 +8,7 @@ var PersonSchema = new Schema({
 	name: {firstName: String, lastName: String},
 	year: String,
 	description: String,
+	location: String,
 	photo: String, // url at amazon s3
 	sound: String, // url at amazon s3
   dateAdded: {type: Date, default: moment},

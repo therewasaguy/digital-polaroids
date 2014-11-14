@@ -54,10 +54,10 @@ exports.add = function(req,res){
 exports.saveDescriptionToDb = function(req,res){
 
 	var netId = req.body.userId;
-	var description = req.body.description;
+	var location = req.body.location;
 
   // now update the user
-  Person.findOneAndUpdateQ({netId:netId}, { $set: {description:description}})
+  Person.findOneAndUpdateQ({netId:netId}, { $set: {location:location}})
   .then(function(response){
     console.log('user updated! ' + response);
     res.json({status:'success'}); 
