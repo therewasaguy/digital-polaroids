@@ -186,14 +186,14 @@ function submitId(){
 
 function submitDescription (){
 
-	var description = $('#description').val()
+	var location = $('#description').val()
 	var userDiv = document.getElementById('userId');
 	var userId = userDiv.getAttribute('data-userId');
 
 	$.ajax({
 	  type:"POST",
 	  url: "/api/add/description",
-	  data: {description:description,userId:userId},
+	  data: {location:location,userId:userId},
 	  success: function (response) {
 	  	document.getElementById('welcome').style.display = 'none';
 	  }

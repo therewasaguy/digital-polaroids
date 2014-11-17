@@ -56,6 +56,7 @@ exports.saveDescriptionToDb = function(req,res){
 	var netId = req.body.userId;
 	var location = req.body.location;
 
+	console.log(req.body.location);
   // now update the user
   Person.findOneAndUpdateQ({netId:netId}, { $set: {location:location}})
   .then(function(response){
