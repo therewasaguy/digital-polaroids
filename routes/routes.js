@@ -244,45 +244,33 @@ exports.addPhotos = function(req,res){
 		console.log('done');
 	});
 
-  // for (var i=0;i<233;i++){
-		// var ranNum = Math.floor((Math.random() * (gifList.length)) + 0);
-	 //  var dataToSave = {photo: gifList[ranNum],description: 'just a random description for testing purposes!'};
-
-	 //    Person.update({},{$set: dataToSave},{multi: false}, function (err,data) {
-	 //        if (err) {
-	 //            console.log(err);
-	 //        }
-	 //        else {
-	 //        	console.log(data);
-	 //        }
-	 //    })
-	  // Person.updateQ({$set: dataToSave})
-	  // .then(function(response){
-	  // 	console.log(response);
-	  // 	//res.json(response);
-	  // })
-	  // .fail(function (err) { 
-	  // 	console.log('error in updating user! ' + err)
-	  // })
-	  // .done();
-	// }
-
-
- //  	// now loop through and update them all
- //  for(var i=0;i<personList.length;i++){
-	// 	var ranNum = Math.floor((Math.random() * (gifList.length)) + 0);
-	//   var dataToSave = {photo: gifList[ranNum],description: 'just a random description for testing purposes!'};  	
- //  	Person.findOneAndUpdateQ({_id:personList[i]._id}, { $set: dataToSave})
- //  	.then(function(response){
- //  		console.log('updated person: '+response);
- //  	})
-	//   .fail(function (err) { 
-	//   	console.log('error in updating user! ' + err)
-	//   })
-	//   .done();
-	// }
 }
 
+exports.updateInfo = function(req,res){
+
+	Person.find(function(err,data){
+
+		for(var i=0;i<data.length;i++){
+
+				var dataToSave = {
+					description: "",
+					location: "",
+				}
+
+		    Person.update({_id:data[i]._id},{$set: dataToSave}, function (err,data) {
+		        if (err) {
+		            console.log(err);
+		        }
+		        else {
+		        	console.log(data);
+		        }
+			});
+		}
+
+		console.log('done');
+	});
+
+}
 
 exports.createUsers = function(req,res){
 	

@@ -2,6 +2,12 @@ html,body {height:100%;background: url('../img/bg.jpg') repeat;}
 body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 	color: #404040;
 	font-family: 'Rock Salt', cursive;
+	-webkit-text-size-adjust:100%;
+	-ms-text-size-adjust: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
+	-ms-font-smoothing: antialiased;
+	-o-font-smoothing: antialiased;	
 }
 .btn{border: none!important;}
 #portrait-holder{

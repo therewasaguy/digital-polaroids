@@ -1,6 +1,6 @@
 function init() {
 
-	preparePortraits();
+	//preparePortraits();
 
 	var videoContainer = document.getElementById('video');
 	var gifContainer = document.getElementById('gifContainer');
@@ -11,7 +11,7 @@ function init() {
 	// add event listners
 	window.addEventListener('resize', onResize);
 	document.getElementById('capture').addEventListener('click', startGifCapture);
-	document.getElementById('save').addEventListener('click', postGif);
+	//document.getElementById('save').addEventListener('click', postGif);
 	document.getElementById('reRecord').addEventListener('click',reStart); 
 	document.getElementById('done').addEventListener('click',reLoad); 
 	document.getElementById('netId').addEventListener('change', submitId);
@@ -79,12 +79,16 @@ function init() {
 		img.style.height = imageSize[1] + 'px';
 
 		gifContainer.insertBefore(img, gifContainer.firstChild);
-		document.getElementById('loader').style.display = 'none';	
+		//document.getElementById('loader').style.display = 'none';	
 		document.getElementById('gifContainer').style.display = "block";
 		document.getElementById('video').style.display = "none";
-		document.getElementById('save').style.display = "block";
+		//document.getElementById('save').style.display = "block";
 		document.getElementById('reRecord').style.display = "block";
 		document.getElementById('capture').style.display = "none";
+
+		// go ahead and save automatically
+		postGif();
+
 
 	}
 
@@ -120,7 +124,7 @@ function init() {
   function reStart(){
   	if(gifContainer.childElementCount > 0) gifContainer.removeChild(gifContainer.lastChild);
   	document.getElementById('gifContainer').style.display = "none";
-		document.getElementById('save').style.display = "none";
+		//document.getElementById('save').style.display = "none";
 		document.getElementById('reRecord').style.display = "none";  
 		document.getElementById('done').style.display = "none"; 	
   	document.getElementById('video').style.display = "block";
@@ -137,7 +141,8 @@ function init() {
 window.addEventListener('DOMContentLoaded', init);
 
 function postGif (){
-	document.getElementById('loader').style.display = 'block';
+	document.getElementById('loader').style.display = 'block'
+	document.getElementById('help-text').innerHTML = "saving...";
 
 	var gif = $('#generatedGif').attr('src');
 	var userDiv = document.getElementById('userId');
@@ -149,7 +154,7 @@ function postGif (){
 	  data: {image_gif:gif,userId:userId},
 	  success: function (response) {
 	    document.getElementById('loader').style.display = 'none';
-	    document.getElementById('save').style.display = 'none';
+	    //document.getElementById('save').style.display = 'none';
 	    document.getElementById('done').style.display = 'block';
 	  }
 	});
@@ -172,7 +177,7 @@ function submitId(){
 	  	// hide id field, show description field
 	  	document.getElementById('netId').style.display = 'none';
 	  	document.getElementById('alertMsg').style.display = 'none';
-	  	document.getElementById('welcome').style.zIndex ='-1';
+	  	document.getElementById('welcome').style.zIndex ='0';
 	  	document.getElementById('desc-holder').style.top = '25%';
 	  	document.getElementById('description-holder').style.display = 'block';
 	  	document.getElementById('description').focus();

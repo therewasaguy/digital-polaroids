@@ -62,7 +62,7 @@ app.all('*', function(req, res, next){
 
 var routes = require('./routes/routes.js');
 
-app.get('/',routes.get12);
+app.get('/',routes.add); //get12
 app.get('/9',routes.get9);
 app.get('/add', routes.add);
 app.post('/api/add/photo', routes.savePhotoToDb);
@@ -80,6 +80,8 @@ app.get('/api/get/users/:num', routes.getUsers);
 //app.get('/onlysamshoulddothis/addPhotos', routes.addPhotos);
 // call to clear all photos for all users, for testing purposes
 //app.get('/onlysamshoulddothis/deletePhotos', routes.deletePhotos)
+// call to reset some db values
+app.get('/onlysamshoulddothis/updateInfo', routes.updateInfo);
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){
