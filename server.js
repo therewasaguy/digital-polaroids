@@ -81,7 +81,7 @@ app.get('/api/get/users/:num', routes.getUsers);
 // call to clear all photos for all users, for testing purposes
 //app.get('/onlysamshoulddothis/deletePhotos', routes.deletePhotos)
 // call to reset some db values
-app.get('/onlysamshoulddothis/updateInfo', routes.updateInfo);
+// app.get('/onlysamshoulddothis/updateInfo', routes.updateInfo);
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){

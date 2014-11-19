@@ -255,6 +255,7 @@ exports.updateInfo = function(req,res){
 				var dataToSave = {
 					description: "",
 					location: "",
+					photo: ""
 				}
 
 		    Person.update({_id:data[i]._id},{$set: dataToSave}, function (err,data) {

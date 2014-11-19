@@ -147,13 +147,13 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 
 #welcome {
 	background-color: rgba(243,236,211,0.97);
-	width: 594px;
-	height: 475px;
+	width: 592px;
+	height: 474px;
 	text-align: center;
 	position: absolute;
 	top: 129px;
 	left: 109px;
-	z-index: -1;
+	z-index: 0;
 }
 
 #loader {
@@ -242,6 +242,19 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 }
 
 @media (max-width: 1345px){
+	#portrait0,#portrait1,#portrait2,#portrait3{width:150px;height:112px;}
+	.small-portrait {width: 83%;}
+	#portrait0,#portrait1{left:50px;}
+	#portrait2,#portrait3{right:50px;}
+}
+@media (max-width: 1200px){
+	#welcome .input-holder{left: 10%;}
+}
+@media (max-width: 1150px){
+	#portrait0,#portrait1{left:10px;}
+	#portrait2,#portrait3{right:10px;}
+}
+@media (max-width: 1000px){
 	#portrait0,#portrait1,#portrait2,#portrait3{display: none;}
 }
 
