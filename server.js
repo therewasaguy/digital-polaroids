@@ -62,7 +62,8 @@ app.all('*', function(req, res, next){
 
 var routes = require('./routes/routes.js');
 
-app.get('/',routes.add); //get12
+app.get('/',routes.add);
+app.get('/itp-wall',routes.get12); //get12
 app.get('/9',routes.get9);
 app.get('/add', routes.add);
 app.post('/api/add/photo', routes.savePhotoToDb);

@@ -56,7 +56,6 @@ exports.saveDescriptionToDb = function(req,res){
 	var netId = req.body.userId;
 	var location = req.body.location;
 
-	console.log(req.body.location);
   // now update the user
   Person.findOneAndUpdateQ({netId:netId}, { $set: {location:location}})
   .then(function(response){
@@ -167,9 +166,8 @@ exports.getUsers = function(req,res){
 
 	console.log('getting '+requestNum+' users');
 
-	Person.findQ({ photo: {$exists: true}})
+	Person.findQ({photo: {'$ne': '' }})
 	.then(function(response){
-
 		// choose 9 at random
 		var ranNumArray = new Array();
 		for(var i=0;i<requestNum;i++){
@@ -181,6 +179,7 @@ exports.getUsers = function(req,res){
 			 // get a random number between 0 and the document array length 
 			 var ranNum = Math.floor((Math.random() * response.length) + 0);
 			 // if ranNum is already in the array of chosen numbers, getRanNum again
+			 if (!response[ranNum] || response[ranNum] == 'null') getRanNum(); // if null, calls the function again
 			 if (checkDuplicates(ranNum,ranNumArray)) getRanNum(); // if duplicated, calls the function again
 			 if (!response[ranNum] || response[ranNum] == 'null') getRanNum(); // if null, calls the function again
 			 else return ranNum;

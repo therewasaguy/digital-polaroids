@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	setDayRefresh();
 	setFeatureStudent();
 	TweenLite.set(".grid", {perspective:800});
 	TweenLite.set(".frame", {transformStyle:"preserve-3d"});
@@ -6,6 +7,15 @@ $(document).ready(function(){
 	TweenLite.set([".back", ".front", ".gif", ".backFrame"], {backfaceVisibility:"hidden"});	
 	//resetImage();
 	$.when(resetImage()).done(generateTimeline());	
+
+function setDayRefresh(){
+	var now = new Date();
+	var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 0, 0, 0) - now;
+	if (millisTill10 < 0) {
+	     millisTill10 += 86400000; //
+	}
+	setTimeout(function(){location.reload()}, millisTill10);
+}
 
 function setFeatureStudent(){
 	$.getJSON("/api/get/users/1", function( data ) {
@@ -19,7 +29,7 @@ function setFeatureStudent(){
 				main.style.background="url("+mphoto+") no-repeat";
 				main.style.backgroundSize ="cover";
 				main.style.backfaceVisibility="hidden";
-				var details = "<h1>"+ firstName + " " + lastName+ " "+location+"</h1>";
+				var details = "<h1>"+ firstName + " " + lastName+ " - "+location+"</h1>";
 				var p = document.getElementById("plaque");
 				p.innerHTML = details;			
 		}

@@ -16,6 +16,9 @@
 		font-family: 'Rock Salt', cursive;
 		color:#3D1F00;
 	}
+	h1.test{
+		line-height: 30px;
+	}
 	p{
 		font-size: 8px;
 		text-align: center;
@@ -164,7 +167,18 @@
 		line-height: 64px;
 		text-align: center;
 		background:url("../img/plaque.png") no-repeat;
-		background-size: cover;		
+		background-size:408px 64px;
+		margin-top: -15px;
+	}
+
+	.plaque{
+		width:224px;
+		height:64px;
+		margin:5px auto;
+		line-height: 64px;
+		text-align: center;
+		background:url("../img/plaque.png") no-repeat;
+		background-size:224px 64px;			
 	}
 	
 
@@ -204,4 +218,10 @@
 		-ms-transform: rotate(-1deg); 
 	    -webkit-transform: rotate(-1deg); 
 	    transform: rotate(-1deg);
+	}
+
+	.featured-banner{
+		position: absolute;
+		bottom:25px;
+		left:78px;
 	}
