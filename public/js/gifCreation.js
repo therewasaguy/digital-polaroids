@@ -182,6 +182,7 @@ function submitId(){
 	  	document.getElementById('description-holder').style.display = 'block';
 	  	document.getElementById('description').focus();
 	  	document.getElementById('userName').innerHTML = 'Hi, ' + response.user.name.firstName + " " + response.user.name.lastName + "!";
+	  	$('#description').val(response.user.location);
 	  },
 	  failure: function (response){
 	  	document.getElementById('alertMsg').style.display = 'block';
@@ -195,14 +196,17 @@ function submitDescription (){
 	var userDiv = document.getElementById('userId');
 	var userId = userDiv.getAttribute('data-userId');
 
-	$.ajax({
-	  type:"POST",
-	  url: "/api/add/description",
-	  data: {location:location,userId:userId},
-	  success: function (response) {
-	  	document.getElementById('welcome').style.display = 'none';
-	  }
-	});
+	if(location!=""){
+		console.log("got here!");
+		$.ajax({
+		  type:"POST",
+		  url: "/api/add/description",
+		  data: {location:location,userId:userId},
+		  success: function (response) {
+		  	document.getElementById('welcome').style.display = 'none';
+		  }
+		});
+	}
 }
 
 function preparePortraits(){

@@ -272,6 +272,24 @@ exports.updateInfo = function(req,res){
 
 }
 
+exports.getEmails = function(req,res){
+	Person.find(function(err,data){
+
+		var emailList;
+
+		for(var i=0;i<data.length;i++){
+
+			if (data[i].photo == "") emailList += data[i].netId+"@nyu.edu,"
+		}
+
+		fs.writeFile('emails.csv', emailList, function (err) {
+		  if (err) throw err;
+		  console.log('It\'s saved!');
+		});
+	});
+
+}
+
 exports.createUsers = function(req,res){
 	
 	var csv = require('fast-csv');

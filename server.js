@@ -83,6 +83,8 @@ app.get('/api/get/users/:num', routes.getUsers);
 //app.get('/onlysamshoulddothis/deletePhotos', routes.deletePhotos)
 // call to reset some db values
 // app.get('/onlysamshoulddothis/updateInfo', routes.updateInfo);
+// call to get all emails that haven't submitted
+//app.get('/get-emails',routes.getEmails);
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){
