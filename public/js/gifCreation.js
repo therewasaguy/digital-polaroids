@@ -197,7 +197,6 @@ function submitDescription (){
 	var userId = userDiv.getAttribute('data-userId');
 
 	if(location!=""){
-		console.log("got here!");
 		$.ajax({
 		  type:"POST",
 		  url: "/api/add/description",
