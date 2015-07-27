@@ -75,16 +75,16 @@ app.get('/api/get/users/:num', routes.getUsers);
 // TESTING / UTILITY ROUTES - not used in production //
 
 // call to create users in the DB from a CSV
-//app.get('/onlysamshoulddothis/createUsers', routes.createUsers);
+app.get('/admin/createUsers', routes.createUsers);
 
 // call to add photos for all users, for testing purposes
-//app.get('/onlysamshoulddothis/addPhotos', routes.addPhotos);
+app.get('/admin/addPhotos', routes.addPhotos);
 // call to clear all photos for all users, for testing purposes
-//app.get('/onlysamshoulddothis/deletePhotos', routes.deletePhotos)
+app.get('/admin/deletePhotos', routes.deletePhotos)
 // call to reset some db values
-// app.get('/onlysamshoulddothis/updateInfo', routes.updateInfo);
+app.get('/admin/updateInfo', routes.updateInfo);
 // call to get all emails that haven't submitted
-app.get('/get-emails',routes.getEmails);
+app.get('/admin/get-emails',routes.getEmails);
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){

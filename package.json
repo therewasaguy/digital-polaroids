@@ -1,20 +1,19 @@
 {
   "name": "digitalpolaroids",
   "version": "0.0.1",
-  
   "dependencies": {
+    "aws-sdk": "v0.9.8-pre.9",
     "express": "3.0.0rc5",
-    "hogan-express" : "0.3.3",
-    "moment" : "1.7.2",
+    "fast-csv": "^0.6.0",
+    "hogan-express": "0.3.3",
+    "moment": "1.7.2",
     "mongoose": "3.8.4",
+    "mongoose-q": "0.0.10",
     "q": ">= 1.0.0",
-    "mongoose-q" : "0.0.10",
-    "request" : "2.16.6",
-    "aws-sdk" : "v0.9.8-pre.9"
+    "request": "2.16.6"
   },
-
-  "engines" : {
-    "node" : "0.8.x",
-    "npm" : "1.1.x"
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
   }
 }
