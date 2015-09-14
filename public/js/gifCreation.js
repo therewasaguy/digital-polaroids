@@ -162,7 +162,7 @@ function postGif (){
 
 function submitId(){
 	var netId = $('#netId').val()
-
+	console.log(netId);
 	$.ajax({
 	  type:"GET",
 	  url: "/api/user/"+netId,

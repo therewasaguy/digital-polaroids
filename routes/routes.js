@@ -137,7 +137,7 @@ exports.savePhotoToDb = function(req,res){
 
 exports.getUser = function(req,res){
 	var netId = req.param('id');
-
+	console.log('fetching netID');
   Person.findOneQ({netId:netId})
   .then(function(response){
   	if (response == null) var dataToReturn = {status: 'failed'};

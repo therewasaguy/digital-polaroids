@@ -1,3 +1,4 @@
+require('dotenv').load();
 
 /**
  * Module dependencies.
@@ -7,8 +8,10 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var mongoose = require('mongoose-q')(require('mongoose')); // convenience methods for Q with mongoose. see https://github.com/iolo/mongoose-q
+var dbURL = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/itpdir';
 
 
+console.log(dbURL);
 // the ExpressJS App
 var app = express();
 
@@ -34,7 +37,7 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public')));
 
   // database connection
-  app.db = mongoose.connect(process.env.MONGOLAB_URI);
+  app.db = mongoose.connect(dbURL);
   console.log("connected to database");
   
 });

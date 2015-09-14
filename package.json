@@ -10,7 +10,8 @@
     "mongoose": "3.8.4",
     "mongoose-q": "0.0.10",
     "q": ">= 1.0.0",
-    "request": "2.16.6"
+    "request": "2.16.6",
+    "dotenv": "~1.2.0"
   },
   "engines": {
     "node": "0.8.x",
