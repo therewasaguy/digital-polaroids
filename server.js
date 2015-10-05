@@ -9,9 +9,8 @@ var http = require('http');
 var path = require('path');
 var mongoose = require('mongoose-q')(require('mongoose')); // convenience methods for Q with mongoose. see https://github.com/iolo/mongoose-q
 var dbURL = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/itpdir';
+// var dbURL = 'mongodb://localhost:27017/itpdir';
 
-
-console.log(dbURL);
 // the ExpressJS App
 var app = express();
 
@@ -88,6 +87,8 @@ app.get('/admin/deletePhotos', routes.deletePhotos)
 app.get('/admin/updateInfo', routes.updateInfo);
 // call to get all emails that haven't submitted
 app.get('/admin/get-emails',routes.getEmails);
+
+app.post('/uploadwav',routes.uploadWav);
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){

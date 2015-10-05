@@ -2,6 +2,7 @@
 
 <div id="portrait-holder">
 	<img class="addFrame" src="/img/frame.png" >
+
 		<div id="video">
 			<div id="webcam-alert" class="alert alert-dismissable alert-warning">
 				<h4>Please enable your Webcam!</h4>
@@ -13,11 +14,18 @@
 		<button class="btn btn-success" id="save">Save Your Portrait</button>
 		<button class="btn btn-success" id="done">I'm Done Here</button>
 		<button class="btn btn-warning" id="reRecord">Or, Try Again</button>
+
+		<button class="btn btn-success" id="recAudioStart">Record Audio</button>
+		<button class="btn btn-warning" id="recAudioSave">Save Audio</button>
+		<button class="btn btn-warning" id="recAudioAgain">Or, Try Again</button>
+
+		<audio src="" controls id="audioEl"></audio>
+
 		<p id="counter">9</p>
 		<div class="progress" id="progressHolder">
-      		<div id="progressBar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
-      	</div>
-    </div>
+					<div id="progressBar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+				</div>
+		</div>
 
 		<div id="welcome">
 			<div class="input-holder" id="desc-holder">
@@ -26,7 +34,7 @@
 					<label class='alert' id='alertMsg'>Couldn't find that netId<br>(it should look something like abc123)</label>
 					<div id="description-holder">
 		      	<span class="help-block"><span id="userName"></span>
-		      	<br/>To get started, where do you come from?</span>
+		      	<br/>We'd like to take your animated portrait, and record you pronouncing your name.<br/>To get started, where do you come from?</span>
 		      	<textarea class="form-control" rows="4" name="location" id="description" placeholder="From where do you hail?" maxlength="50" autofocus></textarea>
 		      	<button class="btn btn-success" id="descButton">Continue to Your Portrait</button>
 		      </div>
@@ -39,22 +47,22 @@
 
 <div id="portrait0">
 	<img class="addFrame" src="/img/frame01.png" >
-	<img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1416259133370.gif">
+	<!-- <img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1416259133370.gif"> -->
 </div>
 
 <div id="portrait1">
 	<img class="addFrame" src="/img/frame05.png" >
-	<img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1416345861258.gif">
+	<!-- <img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1416345861258.gif"> -->
 </div>
 
 <div id="portrait2">
 	<img class="addFrame" src="/img/frame07.png" >
-	<img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1416349595682.gif">
+	<!-- <img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1416349595682.gif"> -->
 </div>
 
 <div id="portrait3">
 	<img class="addFrame" src="/img/frame02.png" >
-	<img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1414176903720.gif">
+	<!-- <img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1414176903720.gif"> -->
 </div>
 
 <div id="loader">
@@ -65,7 +73,9 @@
 </div>
 <div id='userId' data-userId=''></div>
 
+<script src="/js/vendor/msr/MediaStreamRecorder.js"></script>
 <script src="/js/gumhelper.js" defer></script>
 <script src="/js/Animated_GIF.js" defer></script>
 <script src="/js/videoShooter.js" defer></script>
-<script src="/js/gifCreation.js" defer></script> 		
+<script src="/js/gifCreation.js" defer></script>
+<script src="/js/audioCreation.js"></script>

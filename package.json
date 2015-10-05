@@ -7,14 +7,16 @@
     "fast-csv": "^0.6.0",
     "hogan-express": "0.3.3",
     "moment": "1.7.2",
-    "mongoose": "3.8.4",
+    "mongoose": "^4.1.9",
     "mongoose-q": "0.0.10",
     "q": ">= 1.0.0",
     "request": "2.16.6",
-    "dotenv": "~1.2.0"
+    "dotenv": "~1.2.0",
+    "lame": "~1.2.3",
+    "wav": "~1.0.0"
   },
   "engines": {
     "node": "0.8.x",
-    "npm": "1.1.x"
+    "npm": "2.2.x"
   }
 }

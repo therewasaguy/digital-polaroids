@@ -11,9 +11,12 @@ function init() {
 	// add event listners
 	window.addEventListener('resize', onResize);
 	document.getElementById('capture').addEventListener('click', startGifCapture);
+	// document.getElementById('capture').addEventListener('click', prepareToRecordAudio);
+
+
 	//document.getElementById('save').addEventListener('click', postGif);
 	document.getElementById('reRecord').addEventListener('click',reStart); 
-	document.getElementById('done').addEventListener('click',reLoad); 
+	document.getElementById('done').addEventListener('click', prepareToRecordAudio); 
 	document.getElementById('netId').addEventListener('change', submitId);
 	document.getElementById('descButton').addEventListener('click',submitDescription);
 
@@ -24,7 +27,7 @@ function init() {
 		}
 
 		document.getElementById('webcam-alert').style.display = "none";
-		document.getElementById('capture').style.display = "block";
+		document.getElementById('capture').style.display = "none";
 
 		videoElement = videoEl;
 		videoElement.width = width;
@@ -128,7 +131,7 @@ function init() {
 		document.getElementById('reRecord').style.display = "none";  
 		document.getElementById('done').style.display = "none"; 	
   	document.getElementById('video').style.display = "block";
-  	document.getElementById('capture').style.display = "block";
+  	document.getElementById('capture').style.display = "none";
 
   	startGifCapture();
   }
@@ -161,8 +164,8 @@ function postGif (){
 }
 
 function submitId(){
-	var netId = $('#netId').val()
-	console.log(netId);
+	var netId = $('#netId').val();
+
 	$.ajax({
 	  type:"GET",
 	  url: "/api/user/"+netId,
@@ -195,6 +198,9 @@ function submitDescription (){
 	var location = $('#description').val()
 	var userDiv = document.getElementById('userId');
 	var userId = userDiv.getAttribute('data-userId');
+
+	document.getElementById('capture').style.display = "block";
+
 
 	if(location!=""){
 		$.ajax({

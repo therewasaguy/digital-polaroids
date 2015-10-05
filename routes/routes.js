@@ -11,6 +11,8 @@ var Q = require('q'); // library for javascript promises
 var moment = require("moment"); // date manipulation library
 var Person = require("../models/model.js"); //db model
 
+var wav2mp3 = require('../wav2mp3.js');
+
 // S3 File dependencies
 var fs = require('fs');
 var AWS = require('aws-sdk');
@@ -81,7 +83,7 @@ exports.savePhotoToDb = function(req,res){
 
 	// make it into a proper gif that we can save to db
 	var base64Data = originalGif.replace(/^data:image\/gif;base64,/, "");
-	require("fs").writeFile(filepath, base64Data, 'base64', function(err) {
+	fs.writeFile(filepath, base64Data, 'base64', function(err) {
 	  if (err && err != 'null') console.log(err);
 	  // now, save that new file to Amazon S3
 	  // We first need to open and read the image into a buffer
@@ -126,7 +128,7 @@ exports.savePhotoToDb = function(req,res){
 	          	console.log('error in updating user! ' + err)
 	          	res.json(err); 
 	          })
-	          .done();            
+	          .done();
 	        }
 
 	      });
@@ -135,9 +137,24 @@ exports.savePhotoToDb = function(req,res){
 	});
 }
 
+
+exports.saveAudioToDb = function(req, res) {
+	console.log('saving audio to db');
+
+	var netId = req.body.userId;
+	var mp3Path = req.body.mp3Path;
+
+	// We first need to open and read the mp3 into a buffer
+	fs.readFile(mp3Path, function(err, file_buffer) {
+		// save the file_buffer to our Amazon S3 Bucket
+		var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
+		// TO DO...
+	});
+}
+
 exports.getUser = function(req,res){
 	var netId = req.param('id');
-	console.log('fetching netID');
+
   Person.findOneQ({netId:netId})
   .then(function(response){
   	if (response == null) var dataToReturn = {status: 'failed'};
@@ -279,7 +296,7 @@ exports.getEmails = function(req,res){
 
 		for(var i=0;i<data.length;i++){
 
-			if (data[i].photo == "") emailList += data[i].netId+"@nyu.edu,"
+			if (data[i].photo == "" || typeof(data[i].photo == 'undefined')) emailList += data[i].netId+"@nyu.edu,"
 		}
 
 		fs.writeFile('emails.csv', emailList, function (err) {
@@ -294,7 +311,9 @@ exports.createUsers = function(req,res){
 	
 	var csv = require('fast-csv');
 
-	var stream = fs.createReadStream("all-students-20141024.csv");
+	// var stream = fs.createReadStream("all-students-20141024.csv");
+	// var stream = fs.createReadStream('test.csv');
+	var stream = fs.createReadStream('allstudents2015-2016.csv');
 
 	var csvStream = csv()
     .on("data", function(data){
@@ -325,4 +344,31 @@ exports.createUsers = function(req,res){
 
     stream.pipe(csvStream);
 
+};
+
+exports.uploadWav = function(req, res) {
+
+	saveTempWav(req.body.data, function(tempFilePath) {
+
+		wav2mp3.convert(tempFilePath);
+
+		res.send('got it!')
+	}, function(error) {
+		res.send('error uploading wav')
+	});
+};
+
+function saveTempWav(blob, doSuccess, doError) {
+  var buf = new Buffer(blob, 'base64'); // decode
+  var tempFileName = new Date().getTime() + '_' + Math.round(Math.random() * 900000);
+  var tempFilePath = "./temp/wavs/" + tempFileName + ".wav";
+  console.log('path', tempFilePath);
+
+  fs.writeFile(tempFilePath, buf, function(err) {
+    if(err) {
+      doError(err);
+    } else {
+      doSuccess(tempFilePath);
+    }
+  });
 }

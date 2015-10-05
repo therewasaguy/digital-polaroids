@@ -1,0 +1,69 @@
+{
+  "name": "msr",
+  "preferGlobal": true,
+  "version": "1.2.8",
+  "author": {
+    "name": "Muaz Khan",
+    "email": "muazkh@gmail.com",
+    "url": "http://www.muazkhan.com/"
+  },
+  "description": "Cross-Browser recording of audio/video media streams; targets WebRTC/getUserMedia/WebAudio/etc. Works both on Chrome/Firefox/Opera on desktop & android.",
+  "scripts": {
+    "start": "node MediaStreamRecorder.js"
+  },
+  "main": "./MediaStreamRecorder.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamproc/MediaStreamRecorder.git"
+  },
+  "keywords": [
+    "recorder",
+    "audio-recorder",
+    "video-recorder",
+    "audio-recording",
+    "video-recording",
+    "recording",
+    "record",
+    "audio-video-recorder",
+    "gif-recorder",
+    "audio",
+    "video",
+    "gif",
+    "mediarecorder",
+    "media",
+    "client-side",
+    "webrtc",
+    "mediastreamrecorder",
+    "webrtc-library",
+    "library",
+    "javascript",
+    "chrome",
+    "firefox",
+    "opera",
+    "mediastreamrecorder.js",
+    "webrtc-experiment",
+    "javascript-library",
+    "muaz",
+    "muaz-khan",
+    "stereorecorder",
+    "mediarecorder",
+    "whammyrecorder",
+    "gifrecorder",
+    "multistreamrecorder"
+  ],
+  "analyze": false,
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/streamproc/MediaStreamRecorder/issues",
+    "email": "muazkh@gmail.com"
+  },
+  "homepage": "https://www.webrtc-experiment.com/msr/",
+  "_from": "msr@",
+  "readme": "## [MediaStreamRecorder.js](https://github.com/streamproc/MediaStreamRecorder) - [Demos](https://www.webrtc-experiment.com/msr/) -   [![npm](https://img.shields.io/npm/v/msr.svg)](https://npmjs.org/package/msr) [![downloads](https://img.shields.io/npm/dm/msr.svg)](https://npmjs.org/package/msr)\n\nA cross-browser implementation to record audio/video streams:\n\n1. MediaStreamRecorder can record both audio and video in single WebM file on Firefox.\n2. MediaStreamRecorder can record audio as WAV and video as either WebM or animated gif on Chrome.\n\nMediaStreamRecorder is useful in scenarios where you're planning to submit/upload recorded blobs in realtime to the server! You can get blobs after specific time-intervals.\n\n## [Demos](https://www.webrtc-experiment.com/msr/) using [MediaStreamRecorder.js](https://github.com/streamproc/MediaStreamRecorder) library\n\n| Experiment Name        | Demo           | Source Code |\n| ------------- |-------------|-------------|\n| **Audio Recording** | [Demo](https://www.webrtc-experiment.com/msr/audio-recorder.html) | [Source](https://github.com/streamproc/MediaStreamRecorder/tree/master/demos/audio-recorder.html) |\n| **Video Recording** | [Demo](https://www.webrtc-experiment.com/msr/video-recorder.html) | [Source](https://github.com/streamproc/MediaStreamRecorder/tree/master/demos/video-recorder.html) |\n| **Gif Recording** | [Demo](https://www.webrtc-experiment.com/msr/gif-recorder.html) | [Source](https://github.com/streamproc/MediaStreamRecorder/tree/master/demos/gif-recorder.html) |\n| **MultiStreamRecorder Demo** | [Demo](https://www.webrtc-experiment.com/msr/MultiStreamRecorder.html) | [Source](https://github.com/streamproc/MediaStreamRecorder/tree/master/demos/MultiStreamRecorder.html) |\n\n----\n\nThere is a similar project: **RecordRTC**! [Demo](https://www.webrtc-experiment.com/RecordRTC/) - [Documentation](https://github.com/muaz-khan/WebRTC-Experiment/tree/master/RecordRTC)\n\n## How to link scripts?\n\nYou can [install scripts using NPM](https://www.npmjs.org/package/msr):\n\n```javascript\nnpm install msr\n```\n\nThen link single/standalone \"MediaStreamRecorder.js\" file:\n\n```html\n<script src=\"./node_modules/msr/MediaStreamRecorder.js\"> </script>\n```\n\n## Otherwise, you can \"directly\" link standalone file from CDN:\n\n```html\n<script src=\"https://cdn.webrtc-experiment.com/MediaStreamRecorder.js\"> </script>\n```\n\n## Otherwise, you can link specific files:\n\n* https://github.com/streamproc/MediaStreamRecorder/blob/master/How-to-Link-Specific-Files.md\n\n## Record audio+video in Firefox in single WebM\n\n```html\n<script src=\"https://cdn.webrtc-experiment.com/MediaStreamRecorder.js\"> </script>\n<script>\nvar mediaConstraints = {\n    audio: !!navigator.mozGetUserMedia, // don't forget audio!\n    video: true                         // don't forget video!\n};\n\nnavigator.getUserMedia(mediaConstraints, onMediaSuccess, onMediaError);\n\nfunction onMediaSuccess(stream) {\n    var mediaRecorder = new MediaStreamRecorder(stream);\n    mediaRecorder.mimeType = 'video/webm';\n    mediaRecorder.ondataavailable = function (blob) {\n        // POST/PUT \"Blob\" using FormData/XHR2\n        var blobURL = URL.createObjectURL(blob);\n        document.write('<a href=\"' + blobURL + '\">' + blobURL + '</a>');\n    };\n    mediaRecorder.start(3000);\n}\n\nfunction onMediaError(e) {\n    console.error('media error', e);\n}\n</script>\n```\n\n## Record audio+video in Chrome\n\n`MultiStreamRecorder.js` records both audio/video and returns both blobs in single `ondataavailable` event.\n\n```html\n<script src=\"https://cdn.webrtc-experiment.com/MediaStreamRecorder.js\"> </script>\n<script>\nvar mediaConstraints = {\n    audio: true,\n    video: true\n};\n\nnavigator.getUserMedia(mediaConstraints, onMediaSuccess, onMediaError);\n\nfunction onMediaSuccess(stream) {\n    var multiStreamRecorder = new MultiStreamRecorder(stream);\n    multiStreamRecorder.video = yourVideoElement; // to get maximum accuracy\n    multiStreamRecorder.audioChannels = 1;\n    multiStreamRecorder.ondataavailable = function (blobs) {\n        // blobs.audio\n        // blobs.video\n    };\n    multiStreamRecorder.start(3 * 1000);\n}\n\nfunction onMediaError(e) {\n    console.error('media error', e);\n}\n</script>\n```\n\n## Record only audio in Chrome/Firefox\n\n```html\n<script src=\"https://cdn.webrtc-experiment.com/MediaStreamRecorder.js\"> </script>\n```\n\n```javascript\nvar mediaConstraints = {\n    audio: true\n};\n\nnavigator.getUserMedia(mediaConstraints, onMediaSuccess, onMediaError);\n\nfunction onMediaSuccess(stream) {\n    var mediaRecorder = new MediaStreamRecorder(stream);\n    mediaRecorder.mimeType = 'audio/ogg';\n    mediaRecorder.audioChannels = 1;\n    mediaRecorder.ondataavailable = function (blob) {\n        // POST/PUT \"Blob\" using FormData/XHR2\n        var blobURL = URL.createObjectURL(blob);\n        document.write('<a href=\"' + blobURL + '\">' + blobURL + '</a>');\n    };\n    mediaRecorder.start(3000);\n}\n\nfunction onMediaError(e) {\n    console.error('media error', e);\n}\n```\n\n## Record only-video in chrome\n\n```html\n<script src=\"https://cdn.webrtc-experiment.com/MediaStreamRecorder.js\"> </script>\n<script>\nvar mediaConstraints = {\n    video: true\n};\n\nnavigator.getUserMedia(mediaConstraints, onMediaSuccess, onMediaError);\n\nfunction onMediaSuccess(stream) {\n    var mediaRecorder = new MediaStreamRecorder(stream);\n    mediaRecorder.mimeType = 'video/webm';\n\t\n    // for gif recording\n    // mediaRecorder.mimeType = 'image/gif';\n\t\n    mediaRecorder.width = 320;\n    mediaRecorder.height = 240;\n\t\n    mediaRecorder.ondataavailable = function (blob) {\n        // POST/PUT \"Blob\" using FormData/XHR2\n        var blobURL = URL.createObjectURL(blob);\n        document.write('<a href=\"' + blobURL + '\">' + blobURL + '</a>');\n    };\n    mediaRecorder.start(3000);\n}\n\nfunction onMediaError(e) {\n    console.error('media error', e);\n}\n</script>\n```\n\n## How to manually stop recordings?\n\n```javascript\nmediaRecorder.stop();\n```\n\n## How to upload recorded files using PHP?\n\n**PHP code:**\n\n```php\n<?php\nforeach(array('video', 'audio') as $type) {\n    if (isset($_FILES[\"${type}-blob\"])) {\n        \n\t\t$fileName = $_POST[\"${type}-filename\"];\n        $uploadDirectory = \"uploads/$fileName\";\n        \n        if (!move_uploaded_file($_FILES[\"${type}-blob\"][\"tmp_name\"], $uploadDirectory)) {\n            echo(\"problem moving uploaded file\");\n        }\n\t\t\n\t\techo($uploadDirectory);\n    }\n}\n?>\n```\n\n**JavaScript Code:**\n\n```javascript\nvar fileType = 'video'; // or \"audio\"\nvar fileName = 'ABCDEF.webm';  // or \"wav\" or \"ogg\"\n\nvar formData = new FormData();\nformData.append(fileType + '-filename', fileName);\nformData.append(fileType + '-blob', blob);\n\nxhr('save.php', formData, function (fileURL) {\n    window.open(fileURL);\n});\n\nfunction xhr(url, data, callback) {\n    var request = new XMLHttpRequest();\n    request.onreadystatechange = function () {\n        if (request.readyState == 4 && request.status == 200) {\n            callback(location.href + request.responseText);\n        }\n    };\n    request.open('POST', url);\n    request.send(data);\n}\n```\n\n# API Documentation\n\n## audioChannels\n\nIt is an integer value that accepts either 1 or 2. \"1\" means record only left-channel and skip right-one. The default value is \"2\".\n\n```javascript\nmediaRecorder.audioChannels = 1;\n```\n\n## bufferSize\n\nYou can set following audio-bufferSize values: 0, 256, 512, 1024, 2048, 4096, 8192, and 16384. \"0\" means: let chrome decide the device's default bufferSize. Default value is \"2048\".\n\n```javascript\nmediaRecorder.bufferSize = 0;\n```\n\n## sampleRate\n\nDefault \"sampleRate\" value is \"44100\". Currently you can't modify sample-rate in windows that's why this property isn't yet exposed to public API.\n\nIt accepts values only in range: 22050 to 96000\n\n```javascript\n// set sampleRate for NON-windows systems\nmediaRecorder.sampleRate = 96000;\n```\n\n## video\n\nIt is recommended to pass your HTMLVideoElement to get most accurate result.\n\n```javascript\nvideoRecorder.video = yourHTMLVideoElement;\nvideoRecorder.onStartedDrawingNonBlankFrames = function() {\n    // record audio here to fix sync issues\n    // Note: MultiStreamRecorder auto handles audio sync issues.\n    videoRecorder.clearOldRecordedFrames(); // clear all blank frames\n    audioRecorder.start(interval);\n};\n```\n\n## canvas\n\nUsing this property, you can pass video resolutions:\n\n```javascript\nmediaRecorder.canvas = {\n    width: 1280,\n    height: 720\n};\n```\n\n## videoWidth and videoHeight\n\nYou can stretch video to specific width/height:\n\n```javascript\nmediaRecorder.videoWidth  = 1280;\nmediaRecorder.videoHeight = 720;\n```\n\n## clearOldRecordedFrames\n\nThis method allows you clear current video-frames. You can use it to remove blank-frames.\n\n```javascript\nvideoRecorder.video = yourHTMLVideoElement;\nvideoRecorder.onStartedDrawingNonBlankFrames = function() {\n    videoRecorder.clearOldRecordedFrames(); // clear all blank frames\n    audioRecorder.start(interval);\n};\n```\n\n## stop\n\nThis method allows you stop entire recording process.\n\n```javascript\nmediaRecorder.stop();\n```\n\n## start\n\nThis method takes \"interval\" as the only argument and it starts recording process:\n\n```javascript\nmediaRecorder.start(5 * 1000); // it takes milliseconds\n```\n\n## ondataavailable\n\nThis event is fired according to your interval and \"stop\" method.\n\n```javascript\nmediaRecorder.ondataavailable = function(blob) {\n    POST_to_Server(blob);\n};\n```\n\n## onstop\n\nThis event is fired when recording is stopped, either by invoking \"stop\" method or in case of any unexpected error:\n\n```javascript\nmediaRecorder.onstop = function() {\n    // recording has been stopped.\n};\n```\n\n## mimeType\n\nThis property allows you set output media type:\n\n```javascript\n// video:\nvideoRecorder.mimeType = 'video/webm';\nvideoRecorder.mimeType = 'video/mp4';\n\n// audio:\naudioRecorder.mimeType = 'audio/ogg';\naudioRecorder.mimeType = 'audio/wav';\n\n// gif:\ngifRecorder.mimeType = 'image/gif';\n```\n\n## Browser Support\n\n| Browser        | Support           |\n| ------------- |-------------|\n| Firefox | [Stable](http://www.mozilla.org/en-US/firefox/new/) / [Aurora](http://www.mozilla.org/en-US/firefox/aurora/) / [Nightly](http://nightly.mozilla.org/) |\n| Google Chrome | [Stable](https://www.google.com/intl/en_uk/chrome/browser/) / [Canary](https://www.google.com/intl/en/chrome/browser/canary.html) / [Beta](https://www.google.com/intl/en/chrome/browser/beta.html) / [Dev](https://www.google.com/intl/en/chrome/browser/index.html?extra=devchannel#eula) |\n| Opera | [Stable](http://www.opera.com/) / [NEXT](http://www.opera.com/computer/next)  |\n| Android | [Chrome](https://play.google.com/store/apps/details?id=com.chrome.beta&hl=en) / [Firefox](https://play.google.com/store/apps/details?id=org.mozilla.firefox) / [Opera](https://play.google.com/store/apps/details?id=com.opera.browser) |\n\n## Contributors\n\n1. [Muaz Khan](https://github.com/muaz-khan)\n2. [neizerth](https://github.com/neizerth)\n3. [andersaloof](https://github.com/andersaloof)\n\n## License\n\n[MediaStreamRecorder.js](https://github.com/streamproc/MediaStreamRecorder) library is released under [MIT licence](https://www.webrtc-experiment.com/licence/).\n",
+  "_id": "msr@1.2.8",
+  "dist": {
+    "shasum": "624511f4d19dc966168e577a23f4dd9b9d6a7c2d"
+  },
+  "_resolved": "https://registry.npmjs.org/msr/-/msr-1.2.8.tgz"
+}
