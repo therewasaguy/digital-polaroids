@@ -8,8 +8,8 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var mongoose = require('mongoose-q')(require('mongoose')); // convenience methods for Q with mongoose. see https://github.com/iolo/mongoose-q
-var dbURL = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/itpdir';
-// var dbURL = 'mongodb://localhost:27017/itpdir';
+// var dbURL = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/itpdir';
+var dbURL = 'mongodb://localhost:27017/itpdir';
 
 // the ExpressJS App
 var app = express();

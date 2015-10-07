@@ -3,16 +3,17 @@
   "version": "0.0.1",
   "dependencies": {
     "aws-sdk": "v0.9.8-pre.9",
+    "dotenv": "~1.2.0",
     "express": "3.0.0rc5",
     "fast-csv": "^0.6.0",
+    "fluent-ffmpeg": "^2.0.1",
     "hogan-express": "0.3.3",
+    "lame": "~1.2.3",
     "moment": "1.7.2",
     "mongoose": "^4.1.9",
     "mongoose-q": "0.0.10",
     "q": ">= 1.0.0",
     "request": "2.16.6",
-    "dotenv": "~1.2.0",
-    "lame": "~1.2.3",
     "wav": "~1.0.0"
   },
   "engines": {

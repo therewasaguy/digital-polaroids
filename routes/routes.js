@@ -12,6 +12,7 @@ var moment = require("moment"); // date manipulation library
 var Person = require("../models/model.js"); //db model
 
 var wav2mp3 = require('../wav2mp3.js');
+var ffmpeg = require('fluent-ffmpeg');
 
 // S3 File dependencies
 var fs = require('fs');
@@ -85,11 +86,15 @@ exports.savePhotoToDb = function(req,res){
 	var base64Data = originalGif.replace(/^data:image\/gif;base64,/, "");
 	fs.writeFile(filepath, base64Data, 'base64', function(err) {
 	  if (err && err != 'null') console.log(err);
+
+	  // convert to webm
+	  convertToWebm(filepath);
+
 	  // now, save that new file to Amazon S3
 	  // We first need to open and read the image into a buffer
 	  fs.readFile(filepath, function(err, file_buffer){
 
-	  // save the file_buffer to our Amazon S3 Bucket
+		  // save the file_buffer to our Amazon S3 Bucket
 	  	var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
 
 	  	// Set the bucket object properties
@@ -371,4 +376,20 @@ function saveTempWav(blob, doSuccess, doError) {
       doSuccess(tempFilePath);
     }
   });
+}
+
+
+// convert from gif to webm
+// https://dzone.com/articles/execute-unix-command-nodejs
+// https://gist.github.com/ndarville/10010916
+// https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/issues/274
+// ffmpeg -i your_gif.gif -c:v libvpx -crf 12 -b:v 500K output.webm
+// ffmpeg -i input.mp4 -c:v libvpx -qmin 0 -qmax 50 -crf 5 -b:v 1M -c:a libvorbis output.webm
+function convertToWebm(filepath) {
+	new ffmpeg({ source: filepath })
+	  .withVideoCodec('libvpx')
+	  // .addOptions(['-qmin 0', '-qmax 50', '-crf 5'])
+	  .withVideoBitrate(500)
+	  .saveToFile(filepath.split('.gif')[0] + '.webm');
+		// console.log(filepath);
 }
