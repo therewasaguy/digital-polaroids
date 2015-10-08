@@ -9,8 +9,9 @@ var PersonSchema = new Schema({
 	year: String,
 	description: String,
 	location: String,
-	photo: String, // url at amazon s3
-	sound: String, // url at amazon s3
+	photo: String, // url at amazon s3 // 2015: deprecating GIF in favor of webm
+	webm: String, // url at amazon s3
+	audio: String, // url at amazon s3
   dateAdded: {type: Date, default: moment},
   lastupdated : {type: Date, default: moment}
 });

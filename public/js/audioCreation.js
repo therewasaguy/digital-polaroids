@@ -90,16 +90,17 @@ function initAudio() {
 	}
 
 	function postWav(soundBlob) {
-		var fd = new FormData();
-		fd.append('fname', 'test.wav');
-		fd.append('data', soundBlob);
+		// document.getElementById('loader').style.display = 'block'
+		// document.getElementById('help-text').innerHTML = "saving...";
+
+		var userDiv = document.getElementById('userId');
+		var userId = userDiv.getAttribute('data-userId');
 
 		$.ajax({
 			type: 'POST',
-			url: '/uploadwav',
-			data: fd,
-			processData: false,
-			contentType: false
+			// url: '/uploadwav',
+			url: 'api/add/audio',
+			data: {soundBlob:soundBlob,userId:userId}
 		}).done(function(data) {
 			console.log(data);
 		});

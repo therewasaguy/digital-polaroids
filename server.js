@@ -69,6 +69,7 @@ app.get('/itp-wall',routes.get12); //get12
 app.get('/9',routes.get9);
 app.get('/add', routes.add);
 app.post('/api/add/photo', routes.savePhotoToDb);
+app.post('/api/add/audio', routes.saveAudioToDb);
 app.post('/api/add/description', routes.saveDescriptionToDb);
 
 app.get('/api/user/:id', routes.getUser);

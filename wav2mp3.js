@@ -8,18 +8,30 @@ var wav = require('wav');
 var input, output, reader;
 var wavPath, mp3Path;
 
-exports.convert = function(_wavPath) {
+exports.convert = function(_wavPath, successCallback) {
 	// read file
 	wavPath = _wavPath
+	mp3Path = wavPath.split('.wav')[0] + '.mp3';
+
 	input = fs.createReadStream(wavPath);
-	outfile = wavPath.split('.wav')[0] + '.mp3';
-	mp3Path = fs.createWriteStream(outfile);
+	outfile = fs.createWriteStream(mp3Path);
 
 	// ... start reading the WAV file from the input
 	reader = new wav.Reader();
 
 	// ... we have to wait for the "format" event before we can start encoding
-	reader.on('format', onFormat);
+	reader.on('format', function(format) {
+		console.error('WAV format: %j', format);
+
+		// encoding the wave file into an MP3 is as simple as calling pipe()
+		var encoder = new lame.Encoder(format);
+		reader.pipe(encoder).pipe(outfile).on('finish', function() {
+			console.log('FINISH MP3');
+			successCallback(mp3Path);
+		});
+
+		deleteWav(wavPath);
+	});
 
 	// start transferring the data
 	input.pipe(reader);
@@ -34,18 +46,8 @@ var deleteWav = function(wavPath) {
 	});
 };
 
-// upload mp3 to server
-var uploadMp3ToServer = function(_mp3Path) {
+// // upload mp3 to server
+// var uploadMp3ToServer = function(_mp3Path) {
 
-};
+// };
 
-var onFormat = function(format) {
-  console.error('WAV format: %j', format);
-
-  // encoding the wave file into an MP3 is as simple as calling pipe()
-  var encoder = new lame.Encoder(format);
-  reader.pipe(encoder).pipe(mp3Path);
-  console.log('mp3 path: ' + mp3Path);
-  deleteWav(wavPath);
-  uploadMp3ToServer(mp3Path);
-};

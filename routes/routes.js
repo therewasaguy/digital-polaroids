@@ -78,84 +78,131 @@ exports.savePhotoToDb = function(req,res){
 
 	var netId = req.body.userId;
 	var filename = new Date().getTime().toString()+ '.gif' // for now, file name is just the time stamp
-	var mimeType = 'image/gif';
+	var webmFilename = filename.split('.gif')[0] + '.webm' // for now, file name is just the time stamp
+	var mimeType = 'movie/webm';
 	var filepath = "temp/"+filename; // will write file to temp folder below
 	var originalGif = req.body.image_gif;
+
+	var webmSuccessCallback = function(webmFilepath) {
+		// now, save that new file to Amazon S3
+		// We first need to open and read the image into a buffer
+		fs.readFile(webmFilepath, function(err, file_buffer){
+
+			// save the file_buffer to our Amazon S3 Bucket
+			var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
+
+			// Set the bucket object properties
+			// Key == filename
+			// Body == contents of file
+		  // ACL == Should it be public? Private?
+		  // ContentType == MimeType of file ie. image/jpeg.
+		  var params = {
+		    Key: webmFilename,
+		    Body: file_buffer,
+		    ACL: 'public-read',
+		    ContentType: mimeType
+		  };
+		    
+		  // Put the Object in the Bucket
+		  s3bucket.putObject(params, function(err, data) {
+		    if (err) {
+		    	console.log(err)
+	      } else {
+					console.log("Successfully uploaded data to s3 bucket");
+
+					// add or update user webm
+					// var dataToSave = {photo: process.env.AWS_S3_PATH + webmFilename};
+					var dataToSave = {webm: process.env.AWS_S3_PATH + webmFilename};
+
+					// // TODO - we shouldn't hard code the url like this, but instead should get a temp URL dynamically using aws-sdk
+					// // i.e. every time there's a request, at that point we get the temp URL by requesting the filename
+					// // see 'getObject' at http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-examples.html
+
+					// now update the user
+					Person.findOneAndUpdateQ({netId:netId}, { $set: dataToSave})
+					.then(function(response){
+					  console.log('user updated! ' + response);
+					  res.json({status:'success'}); 
+					})
+					.fail(function (err) { 
+						console.log('error in updating user! ' + err)
+						res.json(err); 
+					})
+					.done();
+				}
+			});
+		});
+	};
+
 
 	// make it into a proper gif that we can save to db
 	var base64Data = originalGif.replace(/^data:image\/gif;base64,/, "");
 	fs.writeFile(filepath, base64Data, 'base64', function(err) {
-	  if (err && err != 'null') console.log(err);
+		if (err && err != 'null') console.log(err);
 
-	  // convert to webm
-	  convertToWebm(filepath);
-
-	  // now, save that new file to Amazon S3
-	  // We first need to open and read the image into a buffer
-	  fs.readFile(filepath, function(err, file_buffer){
-
-		  // save the file_buffer to our Amazon S3 Bucket
-	  	var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
-
-	  	// Set the bucket object properties
-	  	// Key == filename
-	  	// Body == contents of file
-	    // ACL == Should it be public? Private?
-	    // ContentType == MimeType of file ie. image/jpeg.
-	    var params = {
-	      Key: filename,
-	      Body: file_buffer,
-	      ACL: 'public-read',
-	      ContentType: mimeType
-	    };
-	      
-	    // Put the Object in the Bucket
-	    s3bucket.putObject(params, function(err, data) {
-	      if (err) {
-	      	console.log(err)
-	        } else {
-	          console.log("Successfully uploaded data to s3 bucket");
-
-	          // add or update user image
-	          var dataToSave = {photo: process.env.AWS_S3_PATH + filename};
-
-	          // // TODO - we shouldn't hard code the url like this, but instead should get a temp URL dynamically using aws-sdk
-	          // // i.e. every time there's a request, at that point we get the temp URL by requesting the filename
-	          // // see 'getObject' at http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-examples.html
-
-	          // now update the user
-	          Person.findOneAndUpdateQ({netId:netId}, { $set: dataToSave})
-	          .then(function(response){
-	            console.log('user updated! ' + response);
-	            res.json({status:'success'}); 
-	          })
-	          .fail(function (err) { 
-	          	console.log('error in updating user! ' + err)
-	          	res.json(err); 
-	          })
-	          .done();
-	        }
-
-	      });
-
-	    });
+		// convert to webm, then call the above callback
+		convertToWebm(filepath, webmSuccessCallback);
 	});
 }
 
 
 exports.saveAudioToDb = function(req, res) {
 	console.log('saving audio to db');
-
 	var netId = req.body.userId;
-	var mp3Path = req.body.mp3Path;
 
-	// We first need to open and read the mp3 into a buffer
-	fs.readFile(mp3Path, function(err, file_buffer) {
-		// save the file_buffer to our Amazon S3 Bucket
-		var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
-		// TO DO...
+	saveTempWav(req.body.soundBlob, function(tempFilePath) {
+
+		wav2mp3.convert(tempFilePath, mp3SuccessCallback);
+
+		res.send('got it!')
+	}, function(error) {
+		res.send('error uploading wav')
 	});
-}
+
+	var mp3SuccessCallback = function(mp3Path) {
+		console.log(mp3Path);
+		var mp3Filename = mp3Path.split('/temp/')[1];
+		var mimeType = 'audio/mpeg3';
+		console.log(mp3Filename);
+
+		// We first need to open and read the mp3 into a buffer
+		fs.readFile(mp3Path, function(err, file_buffer) {
+			console.log(file_buffer);
+
+			// save the file_buffer to our Amazon S3 Bucket
+			var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
+
+			var params = {
+				Key: mp3Filename,
+				Body: file_buffer,
+				ACL: 'public-read',
+				ContentType: mimeType
+			};
+
+			s3bucket.putObject(params, function(err, data) {
+				if (err) {
+					console.log(err)
+				} else {
+					console.log("Successfully uploaded data to s3 bucket");
+
+				var dataToSave = {audio: process.env.AWS_S3_PATH + mp3Filename};
+
+				// update DB
+				Person.findOneAndUpdateQ({netId:netId}, { $set: dataToSave})
+				.then(function(response){
+				  console.log('user updated! ' + response);
+				  res.json({status:'success'}); 
+				})
+				.fail(function (err) { 
+					console.log('error in updating user! ' + err)
+					res.json(err); 
+				})
+				.done();
+				}
+			});
+		});
+	}
+};
 
 exports.getUser = function(req,res){
 	var netId = req.param('id');
@@ -351,22 +398,22 @@ exports.createUsers = function(req,res){
 
 };
 
-exports.uploadWav = function(req, res) {
+// exports.uploadWav = function(req, res) {
+// 	console.log(req.body.userId);
+// 	saveTempWav(req.body.soundBlob, function(tempFilePath) {
 
-	saveTempWav(req.body.data, function(tempFilePath) {
+// 		wav2mp3.convert(tempFilePath);
 
-		wav2mp3.convert(tempFilePath);
-
-		res.send('got it!')
-	}, function(error) {
-		res.send('error uploading wav')
-	});
-};
+// 		res.send('got it!')
+// 	}, function(error) {
+// 		res.send('error uploading wav')
+// 	});
+// };
 
 function saveTempWav(blob, doSuccess, doError) {
   var buf = new Buffer(blob, 'base64'); // decode
   var tempFileName = new Date().getTime() + '_' + Math.round(Math.random() * 900000);
-  var tempFilePath = "./temp/wavs/" + tempFileName + ".wav";
+  var tempFilePath = "./temp/" + tempFileName + ".wav";
   console.log('path', tempFilePath);
 
   fs.writeFile(tempFilePath, buf, function(err) {
@@ -385,11 +432,17 @@ function saveTempWav(blob, doSuccess, doError) {
 // https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/issues/274
 // ffmpeg -i your_gif.gif -c:v libvpx -crf 12 -b:v 500K output.webm
 // ffmpeg -i input.mp4 -c:v libvpx -qmin 0 -qmax 50 -crf 5 -b:v 1M -c:a libvorbis output.webm
-function convertToWebm(filepath) {
+function convertToWebm(filepath, successCallback) {
+	var newFilePath = filepath.split('.gif')[0] + '.webm';
 	new ffmpeg({ source: filepath })
-	  .withVideoCodec('libvpx')
-	  // .addOptions(['-qmin 0', '-qmax 50', '-crf 5'])
-	  .withVideoBitrate(500)
-	  .saveToFile(filepath.split('.gif')[0] + '.webm');
-		// console.log(filepath);
+		.withVideoCodec('libvpx')
+		.withVideoBitrate(500)
+		.saveToFile(newFilePath)
+		.on('error', function() {
+			console.log('Error converting to webm !');
+		})
+		.on('end', function() {
+			successCallback(newFilePath);
+			console.log('Success converting to webm !');
+		});
 }
