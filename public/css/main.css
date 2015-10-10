@@ -82,8 +82,8 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 	left: 82px;
 	z-index: -1;
 }
-#capture,#save,#gifContainer,#reRecord,#done,#userId,#alertMsg,#description-holder,#counter,#progressHolder, #recAudioStart,#recAudioSave,#recAudioAgain{display: none;}
-#capture,#save,#reRecord,#done,#recAudioStart,#recAudioSave,#recAudioAgain{position: absolute;bottom: 0;}
+#capture,#save,#gifContainer,#reRecord,#done,#userId,#alertMsg,#description-holder,#counter,#progressHolder, #recAudioStart, #recAudioStop, #recAudioSave,#recAudioAgain,#recAudioListen{display: none;}
+#capture,#save,#reRecord,#done,#recAudioStart,#recAudioStop,#recAudioSave,#recAudioAgain,#recAudioListen{position: absolute;bottom: 0;}
 #capture{
 	left: 305px;
 	z-index: -1;
@@ -91,7 +91,7 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 	width: 215px;
 	height: 55px;
 }
-#recAudioStart,#save,#done{left:260px;}
+#recAudioStart,#save,#done,#recAudioListen,#recAudioStop{left:260px;}
 #recAudioAgain,#reRecord{left: 425px;}
 #audioEl {
 	position: absolute;
@@ -246,6 +246,10 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 	left: 230px;
 }
 
+.progress-bar {
+	transition: width 0.2s ease;
+}
+
 .progress-bar-danger {
 	background-color: #b85252;
 }
@@ -258,7 +262,7 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 	left:15%;
 	position: absolute;
 	display: none;
-	z-index:10000;
+	/*z-index:1;*/
 }
 
 @media (max-width: 1345px){

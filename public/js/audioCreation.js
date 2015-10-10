@@ -6,18 +6,27 @@ function initAudio() {
 
 	var stream;
 	var audioContainer = document.getElementById('audio');
-	var maxRecordingTime = 3;// seconds
+	var maxRecordingTime = 7;// seconds
 	var recordingStartedTime;
-	var timerLoop;
+	var timerLoop, playbackVizLoop;
 
 	// add event listners
 	document.getElementById('recAudioStart').addEventListener('click', recordAudio); 
+	document.getElementById('recAudioAgain').addEventListener('click', recordAudio); 
+	document.getElementById('recAudioListen').addEventListener('click', playAudio);
+	audioEl.onpause = function() {
+		window.clearInterval(playbackVizLoop);
+		playbackVizLoop = null;
+			document.getElementById('level-meter').style.display = 'none';
+
+	}
 
 	window.navigator.getUserMedia( {'audio':true}, onMediaSuccess, onMediaError);
 
 	window.prepareToRecordAudio = function() {
 		document.getElementById('done').style.display = 'none';
 		document.getElementById('reRecord').style.display = 'none';
+		audioEl.style.display = 'none';
 		document.getElementById('recAudioStart').style.display = 'block';
 	}
 
@@ -25,26 +34,32 @@ function initAudio() {
 		mediaRecorder = new MediaStreamRecorder(stream);
 		mediaRecorder.mimeType = 'audio/ogg';
 		mediaRecorder.audioChannels = 1;
-		document.getElementById('capture').style.pointerEvents = "none";
-		document.getElementById('capture').innerHTML = "We're recording...";
+		// document.getElementById('capture').style.pointerEvents = "none";
+		document.getElementById('capture').style.display = "none";
+		document.getElementById('recAudioAgain').style.display = "none";
+		document.getElementById('recAudioListen').style.display = "none";
+
+		document.getElementById('recAudioStop').style.display = "block";
+		document.getElementById('recAudioStop').innerHTML = "Recording... (click to stop)";
+		document.getElementById('recAudioStop').addEventListener('click', stopRecordingAudio);
 
 		document.getElementById('recAudioStart').style.display = 'none';
 
-		mediaRecorder.ondataavailable = function(blob) {
+		audioEl.pause();
 
-			var now = window.performance.now();
+		mediaRecorder.ondataavailable = function(blob) {
+			console.log('blob data');
 			var audioBlob = blob;
 
-			console.log(audioBlob);
-			// POST / PUT "blob" using form data
-			var blobURL = URL.createObjectURL(audioBlob);
-			audioEl.src = blobURL;
-			audioEl.style.display = 'block';
-			document.getElementById('counter').style.display = 'none';
+			// upload the blob as data
+			makeWavFromBlob(audioBlob);
+
 			mediaRecorder.stop();
 
-			// also upload the blob as data
-			makeWavFromBlob(audioBlob);
+			// create audio element on the page for previewing
+			var blobURL = URL.createObjectURL(audioBlob);
+			onStopRecordingAudioCallback(blobURL);
+
 		};
 
 		recordingStartedTime = window.performance.now();
@@ -55,9 +70,45 @@ function initAudio() {
 
 	// not currently in use
 	function stopRecordingAudio() {
+		console.log('stop recording audio!');
+		window.clearInterval(timerLoop);
+
+		// add new buttons
+		mediaRecorder.stop();
+	}
+
+	// callback to change the view once audio has been recorded
+	function onStopRecordingAudioCallback(blobURL) {
+		console.log('hi');
+		audioEl.src = blobURL;
+		// audioEl.style.display = 'block';
+
+		// hide buttons and stuff
+		document.getElementById('progressHolder').style.display = 'none';
+		document.getElementById('recAudioStop').style.display = 'none';
 		document.getElementById('counter').style.display = 'none';
 		document.getElementById('level-meter').style.display = 'none';
-		mediaRecorder.stop();
+		document.getElementById('recAudioStart').style.display = 'none';
+
+		// show preview, re-record and save buttons
+		document.getElementById('recAudioListen').style.display = 'block';
+		document.getElementById('recAudioAgain').style.display = 'block';
+	}
+
+	function playAudio() {
+		audioEl.currentTime = 0;
+		audioEl.play();
+
+		if (!playbackVizLoop) {
+			// show meter
+			document.getElementById('level-meter').style.display = 'block';
+			// set loop to update volume meter
+			playbackVizLoop = setInterval(function(){
+				document.getElementById('level-meter').style.height = (amp.getLevel() * 100).toString()+'%';
+				console.log('playback viz');
+			}, 60);
+		}
+
 	}
 
 	// connect input audio stream to measure amplitude
@@ -65,7 +116,11 @@ function initAudio() {
 		stream = _stream;
 		amp = new p5.Amplitude();
 		mediaStream = amp.audiocontext.createMediaStreamSource(stream);
-		amp.setInput(mediaStream);
+		mediaStream.connect(amp.input);
+
+		var audioElNode = amp.audiocontext.createMediaElementSource(audioEl);
+		audioElNode.connect(amp.input);
+		audioElNode.connect(amp.audiocontext.destination);
 	}
 
 	function onMediaError(e) {
@@ -108,9 +163,7 @@ function initAudio() {
 
 			document.getElementById('progressHolder').style.display = 'block';
 			document.getElementById('progressBar').style.width = recPercentage.toString()+'%';
-			if (recPercentage > 101) {
-				console.log(recPercentage);
-				window.clearInterval(timerLoop);
+			if ( Number(counter.innerHTML) > maxRecordingTime) {
 				stopRecordingAudio();
 			}
 		}, 60);
