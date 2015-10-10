@@ -250,6 +250,17 @@ body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
 	background-color: #b85252;
 }
 
+#level-meter {
+	background-color: rgba(0, 255, 0, 0.8);
+	width: 71%;
+	height: 20px;
+	bottom: 0px;
+	left:15%;
+	position: absolute;
+	display: none;
+	z-index:10000;
+}
+
 @media (max-width: 1345px){
 	#portrait0,#portrait1,#portrait2,#portrait3{width:150px;height:112px;}
 	.small-portrait {width: 83%;}

@@ -10,8 +10,8 @@ function init() {
 
 	// add event listners
 	window.addEventListener('resize', onResize);
-	document.getElementById('capture').addEventListener('click', startGifCapture);
-	// document.getElementById('capture').addEventListener('click', prepareToRecordAudio);
+	// document.getElementById('capture').addEventListener('click', startGifCapture);
+	document.getElementById('capture').addEventListener('click', prepareToRecordAudio);
 
 
 	//document.getElementById('save').addEventListener('click', postGif);
@@ -55,7 +55,7 @@ function init() {
 			document.getElementById('capture').innerHTML = "We're recording...";
 			
 			if((progress*100)%1 === 0){
-				var count = 10-(progress*10);
+				var count = 10-(progress*80);
 				document.getElementById('counter').innerHTML = count;
 				document.getElementById('counter').style.opacity = '0.8';
 			}
