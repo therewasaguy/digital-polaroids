@@ -12,7 +12,7 @@ var moment = require("moment"); // date manipulation library
 var Person = require("../models/model.js"); //db model
 
 var wav2mp3 = require('../wav2mp3.js');
-var ffmpeg = require('fluent-ffmpeg');
+var gif2webm = require('../gif2webm.js');
 
 // S3 File dependencies
 var fs = require('fs');
@@ -110,8 +110,10 @@ exports.savePhotoToDb = function(req,res){
 	      } else {
 					console.log("Successfully uploaded data to s3 bucket");
 
+					// remove file from temp folder on the server cuz it's in s3 now
+					wav2mp3.deleteFile(webmFilepath);
+
 					// add or update user webm
-					// var dataToSave = {photo: process.env.AWS_S3_PATH + webmFilename};
 					var dataToSave = {webm: process.env.AWS_S3_PATH + webmFilename};
 
 					// // TODO - we shouldn't hard code the url like this, but instead should get a temp URL dynamically using aws-sdk
@@ -141,7 +143,7 @@ exports.savePhotoToDb = function(req,res){
 		if (err && err != 'null') console.log(err);
 
 		// convert to webm, then call the above callback
-		convertToWebm(filepath, webmSuccessCallback);
+		gif2webm.convert(filepath, webmSuccessCallback);
 	});
 }
 
@@ -150,7 +152,7 @@ exports.saveAudioToDb = function(req, res) {
 	console.log('saving audio to db');
 	var netId = req.body.userId;
 
-	saveTempWav(req.body.soundBlob, function(tempFilePath) {
+	wav2mp3.saveTempWav(req.body.soundBlob, function(tempFilePath) {
 
 		wav2mp3.convert(tempFilePath, mp3SuccessCallback);
 
@@ -183,21 +185,24 @@ exports.saveAudioToDb = function(req, res) {
 				if (err) {
 					console.log(err)
 				} else {
-					console.log("Successfully uploaded data to s3 bucket");
+					console.log("Successfully uploaded data to s3 bucket: ", mp3Path);
 
-				var dataToSave = {audio: process.env.AWS_S3_PATH + mp3Filename};
+					// remove file from temp folder on the server cuz it's in s3 now
+					wav2mp3.deleteFile(mp3Path);
 
-				// update DB
-				Person.findOneAndUpdateQ({netId:netId}, { $set: dataToSave})
-				.then(function(response){
-				  console.log('user updated! ' + response);
-				  res.json({status:'success'}); 
-				})
-				.fail(function (err) { 
-					console.log('error in updating user! ' + err)
-					res.json(err); 
-				})
-				.done();
+					var dataToSave = {audio: process.env.AWS_S3_PATH + mp3Filename};
+
+					// update DB
+					Person.findOneAndUpdateQ({netId:netId}, { $set: dataToSave})
+					.then(function(response){
+					  console.log('user updated! ' + response);
+					  res.json({status:'success'}); 
+					})
+					.fail(function (err) { 
+						console.log('error in updating user! ' + err)
+						res.json(err); 
+					})
+					.done();
 				}
 			});
 		});
@@ -235,7 +240,10 @@ exports.getUsers = function(req,res){
 
 	console.log('getting '+requestNum+' users');
 
-	Person.findQ({photo: {'$ne': '' }})
+	Person.findQ({
+		// photo: {'$ne': '' },
+		// year: {$gt: 2015 }})
+		photo: {'$ne': '' }})
 	.then(function(response){
 		// choose 9 at random
 		var ranNumArray = new Array();
@@ -395,54 +403,4 @@ exports.createUsers = function(req,res){
     });
 
     stream.pipe(csvStream);
-
 };
-
-// exports.uploadWav = function(req, res) {
-// 	console.log(req.body.userId);
-// 	saveTempWav(req.body.soundBlob, function(tempFilePath) {
-
-// 		wav2mp3.convert(tempFilePath);
-
-// 		res.send('got it!')
-// 	}, function(error) {
-// 		res.send('error uploading wav')
-// 	});
-// };
-
-function saveTempWav(blob, doSuccess, doError) {
-  var buf = new Buffer(blob, 'base64'); // decode
-  var tempFileName = new Date().getTime() + '_' + Math.round(Math.random() * 900000);
-  var tempFilePath = "./temp/" + tempFileName + ".wav";
-  console.log('path', tempFilePath);
-
-  fs.writeFile(tempFilePath, buf, function(err) {
-    if(err) {
-      doError(err);
-    } else {
-      doSuccess(tempFilePath);
-    }
-  });
-}
-
-
-// convert from gif to webm
-// https://dzone.com/articles/execute-unix-command-nodejs
-// https://gist.github.com/ndarville/10010916
-// https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/issues/274
-// ffmpeg -i your_gif.gif -c:v libvpx -crf 12 -b:v 500K output.webm
-// ffmpeg -i input.mp4 -c:v libvpx -qmin 0 -qmax 50 -crf 5 -b:v 1M -c:a libvorbis output.webm
-function convertToWebm(filepath, successCallback) {
-	var newFilePath = filepath.split('.gif')[0] + '.webm';
-	new ffmpeg({ source: filepath })
-		.withVideoCodec('libvpx')
-		.withVideoBitrate(500)
-		.saveToFile(newFilePath)
-		.on('error', function() {
-			console.log('Error converting to webm !');
-		})
-		.on('end', function() {
-			successCallback(newFilePath);
-			console.log('Success converting to webm !');
-		});
-}

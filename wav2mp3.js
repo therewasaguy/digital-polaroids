@@ -30,7 +30,7 @@ exports.convert = function(_wavPath, successCallback) {
 			successCallback(mp3Path);
 		});
 
-		deleteWav(wavPath);
+		exports.deleteFile(wavPath);
 	});
 
 	// start transferring the data
@@ -39,15 +39,26 @@ exports.convert = function(_wavPath, successCallback) {
 };
 
 
-// delete wav
-var deleteWav = function(wavPath) {
+// delete a file (.wav or .gif or anything) from server temp folder
+exports.deleteFile = function(wavPath) {
 	fs.unlink(wavPath, function(e) {
 		console.log('deleted ' + wavPath);
 	});
 };
 
-// // upload mp3 to server
-// var uploadMp3ToServer = function(_mp3Path) {
 
-// };
+// save .wav file to server in a temp folder
+exports.saveTempWav = function(blob, doSuccess, doError) {
+  var buf = new Buffer(blob, 'base64'); // decode
+  var tempFileName = new Date().getTime() + '_' + Math.round(Math.random() * 900000);
+  var tempFilePath = "./temp/" + tempFileName + ".wav";
+  console.log('path', tempFilePath);
 
+  fs.writeFile(tempFilePath, buf, function(err) {
+    if(err) {
+      doError(err);
+    } else {
+      doSuccess(tempFilePath);
+    }
+  });
+};

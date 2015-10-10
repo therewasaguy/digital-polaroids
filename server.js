@@ -89,7 +89,7 @@ app.get('/admin/updateInfo', routes.updateInfo);
 // call to get all emails that haven't submitted
 app.get('/admin/get-emails',routes.getEmails);
 
-app.post('/uploadwav',routes.uploadWav);
+// app.post('/uploadwav',routes.uploadWav);
 
 // create NodeJS HTTP server using 'app'
 http.createServer(app).listen(app.get('port'), function(){
