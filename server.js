@@ -8,8 +8,8 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var mongoose = require('mongoose-q')(require('mongoose')); // convenience methods for Q with mongoose. see https://github.com/iolo/mongoose-q
-// var dbURL = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/itpdir';
-var dbURL = 'mongodb://localhost:27017/itpdir';
+var dbURL = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/itpdir';
+// var dbURL = 'mongodb://localhost:27017/itpdir';
 
 // the ExpressJS App
 var app = express();
@@ -74,6 +74,8 @@ app.post('/api/add/description', routes.saveDescriptionToDb);
 
 app.get('/api/user/:id', routes.getUser);
 app.get('/api/get/users/:num', routes.getUsers);
+app.get('/api/get/all', routes.getAllUsers);
+
 
 // TESTING / UTILITY ROUTES - not used in production //
 
@@ -88,6 +90,9 @@ app.get('/admin/deletePhotos', routes.deletePhotos)
 app.get('/admin/updateInfo', routes.updateInfo);
 // call to get all emails that haven't submitted
 app.get('/admin/get-emails',routes.getEmails);
+
+app.get('/admin/convert-all-gif-to-webm', routes.convertAllGifToWebm);
+
 
 // app.post('/uploadwav',routes.uploadWav);
 

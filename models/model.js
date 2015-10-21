@@ -10,7 +10,7 @@ var PersonSchema = new Schema({
 	description: String,
 	location: String,
 	photo: String, // url at amazon s3 // 2015: deprecating GIF in favor of webm
-	webm: String, // url at amazon s3
+	webm: String, // url at amazon s3 // temporary
 	audio: String, // url at amazon s3
   dateAdded: {type: Date, default: moment},
   lastupdated : {type: Date, default: moment}

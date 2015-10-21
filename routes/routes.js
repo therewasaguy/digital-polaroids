@@ -16,6 +16,7 @@ var gif2webm = require('../gif2webm.js');
 
 // S3 File dependencies
 var fs = require('fs');
+var http = require('http');
 var AWS = require('aws-sdk');
 var awsBucketName = process.env.AWS_BUCKET_NAME;
 var s3Path = process.env.AWS_S3_PATH; // TODO - we shouldn't hard code the path, but get a temp URL dynamically using aws-sdk's getObject
@@ -404,3 +405,124 @@ exports.createUsers = function(req,res){
 
     stream.pipe(csvStream);
 };
+
+exports.getAllUsers = function(req, res) {
+	Person.find(function(err, data) {
+		res.send(data);
+	});
+}
+
+// run this one time to convert all the gifs to webm
+exports.convertAllGifToWebm = function(req, res) {
+	// get all users from the database
+	var users = [];
+	var toConvert = [];
+	Person.find(function(err, data) {
+		if (err) throw err;
+		console.log('got ' + data.length + ' users!');
+		users = data;
+
+		// for every user...
+		for (var i = 0; i < users.length; i++) {
+			var u = users[i];
+
+			// if user has a .gif but not a .webm...
+			if ( u.photo.length > 0 && u.photo.indexOf('.gif') > -1 && typeof(u.webm == 'undefined')) {
+				console.log(u.photo);
+				toConvert.push(u);
+
+				var gifWebPath = u.photo.replace('https', 'http');
+				var gifName = gifWebPath.split('digitalpolaroids/')[1];
+				var tempGifPath = 'temp/'+gifName;
+				var webmFilename = 	tempGifPath.split('.gif')[0] + '.webm' // for now, file name is just the time stamp
+				var mimeType = 'movie/webm';
+				var netId = u.netId;
+
+				// TO DO: remember netId (or use gif path to lookup?)
+
+				// download method via http://stackoverflow.com/a/22907134/2994108
+				var download = function(url, dest, uNetId, cb) {
+				  var file = fs.createWriteStream(dest);
+				  var request = http.get(url, function(response) {
+				    response.pipe(file);
+				    file.on('finish', function() {
+				      file.close(function() {
+				      	cb(dest, uNetId);
+				      });  // close() is async, call cb after close completes.
+				    });
+				  }).on('error', function(err) { // Handle errors
+				    fs.unlink(dest); // Delete the file async. (But we don't check the result)
+				    if (cb) cb(err.message);
+				  });
+				};
+
+				// same webmSuccessCallback as above...
+				var webmSuccessCallback = function(webmFilepath, _netID) {
+					fs.readFile(webmFilepath, function(err, file_buffer){
+
+						// save the file_buffer to our Amazon S3 Bucket
+						var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
+					  var params = {
+					    Key: webmFilepath,
+					    Body: file_buffer,
+					    ACL: 'public-read',
+					    ContentType: mimeType
+					  };
+					    
+					  // Put the Object in the Bucket
+					  s3bucket.putObject(params, function(err, data) {
+					    if (err) {
+					    	console.log(err)
+				      } else {
+								console.log("Successfully uploaded data to s3 bucket");
+
+								// remove file from temp folder on the server cuz it's in s3 now
+								wav2mp3.deleteFile(webmFilepath);
+
+								// add or update user webm
+								var dataToSave = {webm: process.env.AWS_S3_PATH + webmFilepath};
+
+								// // TODO - we shouldn't hard code the url like this, but instead should get a temp URL dynamically using aws-sdk
+								// // i.e. every time there's a request, at that point we get the temp URL by requesting the filename
+								// // see 'getObject' at http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-examples.html
+
+								// now update the user
+								Person.findOneAndUpdateQ({netId:_netID}, { $set: dataToSave})
+								.then(function(response){
+								  console.log('user updated! ' + response);
+								  res.json({status:'success'}); 
+								})
+								.fail(function (err) { 
+									console.log('error in updating user! ' + err)
+									res.json(err); 
+								})
+								.done();
+							}
+						});
+					});
+				};
+
+
+				// download & save the gif locally
+				download(gifWebPath, tempGifPath, netId, function(savedGifPath, uNetId) {
+					console.log('finished downlaoding ' + savedGifPath);
+					console.log('uNedId: ' + uNetId);
+
+					// convert gif to webm,
+					// upload webm to aws &
+					// save webm path to database
+					gif2webm.convert(savedGifPath, function(wpath){
+						console.log(wpath);
+						webmSuccessCallback(wpath, uNetId)
+					});
+
+					// delete gif
+					// fs.unlink(tempGifPath);
+				});
+			}
+		}
+
+		console.log('users: ' + users.length + ' To convert: ' + toConvert.length);
+
+	});
+}
