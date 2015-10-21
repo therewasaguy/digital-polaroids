@@ -428,7 +428,6 @@ exports.convertAllGifToWebm = function(req, res) {
 
 			// if user has a .gif but not a .webm...
 			if ( u.photo.length > 0 && u.photo.indexOf('.gif') > -1 && typeof(u.webm == 'undefined')) {
-				console.log(u.photo);
 				toConvert.push(u);
 
 				var gifWebPath = u.photo.replace('https', 'http');
