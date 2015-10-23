@@ -26,6 +26,9 @@ function initAudio() {
 	window.prepareToRecordAudio = function() {
 		document.getElementById('done').style.display = 'none';
 		document.getElementById('reRecord').style.display = 'none';
+		document.getElementById('homebase').style.display = 'none';
+		document.getElementById('welcome').style.display = 'none';
+
 		audioEl.style.display = 'none';
 		document.getElementById('recAudioStart').style.display = 'block';
 	}

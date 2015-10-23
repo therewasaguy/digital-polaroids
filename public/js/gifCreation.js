@@ -10,8 +10,13 @@ function init() {
 
 	// add event listners
 	window.addEventListener('resize', onResize);
-	// document.getElementById('capture').addEventListener('click', startGifCapture);
-	document.getElementById('capture').addEventListener('click', prepareToRecordAudio);
+	document.getElementById('capture').addEventListener('click', startGifCapture);
+
+	// --> for testing
+	// document.getElementById('capture').addEventListener('click', prepareToRecordAudio);
+
+	document.getElementById('home-rec-gif').addEventListener('click', prepareToRecordGif);
+	document.getElementById('home-rec-audio').addEventListener('click', prepareToRecordAudio);
 
 
 	//document.getElementById('save').addEventListener('click', postGif);
@@ -167,50 +172,92 @@ function submitId(){
 	var netId = $('#netId').val();
 
 	$.ajax({
-	  type:"GET",
-	  url: "/api/user/"+netId,
-	  success: function (response) {
-	  	if(response.status == 'failed'){
-	  		document.getElementById('alertMsg').style.display = 'block';
-	  		document.getElementById('welcome').style.zIndex ='0';
-	  		return;
-	  	}
-	  	// set the id on the page
-	  	document.getElementById('userId').setAttribute('data-userId', response.user.netId);
-	  	// hide id field, show description field
-	  	document.getElementById('netId').style.display = 'none';
-	  	document.getElementById('alertMsg').style.display = 'none';
-	  	document.getElementById('welcome').style.zIndex ='0';
-	  	document.getElementById('desc-holder').style.top = '25%';
-	  	document.getElementById('description-holder').style.display = 'block';
-	  	document.getElementById('description').focus();
-	  	document.getElementById('userName').innerHTML = 'Hi, ' + response.user.name.firstName + " " + response.user.name.lastName + "!";
-	  	$('#description').val(response.user.location);
-	  },
-	  failure: function (response){
-	  	document.getElementById('alertMsg').style.display = 'block';
-	  }
+		type:"GET",
+		url: "/api/user/"+netId,
+		success: function (response) {
+			if(response.status == 'failed'){
+				document.getElementById('alertMsg').style.display = 'block';
+				document.getElementById('welcome').style.zIndex ='0';
+				return;
+			}
+			var portrait = response.user.webm;
+			var audioPron = response.user.audio;
+			var userLoc = response.user.location;
+			console.log(response.user);
+
+			// set the id on the page
+			document.getElementById('userId').setAttribute('data-userId', response.user.netId);
+			document.getElementById('userId').setAttribute('data-userAudio', response.user.audio);
+			document.getElementById('userId').setAttribute('data-userPortrait', response.user.webm);
+
+			// hide id field, show description field
+			document.getElementById('netId').style.display = 'none';
+			document.getElementById('alertMsg').style.display = 'none';
+			document.getElementById('welcome').style.zIndex ='0';
+			document.getElementById('desc-holder').style.top = '5%';
+			document.getElementById('description-holder').style.display = 'block';
+			document.getElementById('description').focus();
+			document.getElementById('userName').innerHTML = 'Hi, ' + response.user.name.firstName + " " + response.user.name.lastName + "!";
+			$('#description').val(response.user.location);
+			$('#nickname').val(response.user.nickname);
+
+		},
+		failure: function (response){
+			document.getElementById('alertMsg').style.display = 'block';
+		}
 	});	
 }
 
-function submitDescription (){
-
-	var location = $('#description').val()
-	var userDiv = document.getElementById('userId');
-	var userId = userDiv.getAttribute('data-userId');
+function prepareToRecordGif() {
+	document.getElementById('done').style.display = 'none';
+	document.getElementById('reRecord').style.display = 'none';
+	document.getElementById('homebase').style.display = 'none';
+	document.getElementById('welcome').style.display = 'none';
 
 	document.getElementById('capture').style.display = "block";
 
+}
 
-	if(location!=""){
+// when user location is submitted
+function submitDescription (){
+
+	var loc = $('#description').val();
+	var nickname = $('#nickname').val();
+
+	var userDiv = document.getElementById('userId');
+	var userId = userDiv.getAttribute('data-userId');
+	var userAudio = userDiv.getAttribute('data-userAudio');
+	var userPortrait = userDiv.getAttribute('data-userPortrait');
+
+	if (userPortrait.indexOf('webm') > 0) {
+		console.log('user has webm');
+	} else {console.log('user needs webm')}
+
+	if (userAudio.indexOf('mp3') > 0) {
+		console.log('user has audio');
+	} else {console.log('user needs audio')}
+
+	if(loc!=""){
 		$.ajax({
-		  type:"POST",
-		  url: "/api/add/description",
-		  data: {location:location,userId:userId},
-		  success: function (response) {
-		  	document.getElementById('welcome').style.display = 'none';
-		  }
+			type:"POST",
+			url: "/api/add/description",
+			data: {
+				location:loc,
+				userId:userId,
+				nickname: nickname
+			},
+			success: function (response) {
+				document.getElementById('welcome').style.display = 'none';
+			}
 		});
+		document.getElementById('capture').style.display = "block";
+	} else {
+		var pHolder = $('#description')[0].placeholder;
+		if ( pHolder.indexOf("From") > -1) {
+			$('#description')[0].placeholder = "Straight outta ... ?";
+		} else {
+			$('#description')[0].placeholder += '?';
+		}
 	}
 }
 

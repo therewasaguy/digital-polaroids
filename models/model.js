@@ -8,6 +8,7 @@ var PersonSchema = new Schema({
 	name: {firstName: String, lastName: String},
 	year: String,
 	description: String,
+	nickname: String,
 	location: String,
 	photo: String, // url at amazon s3 // 2015: deprecating GIF in favor of webm
 	webm: String, // url at amazon s3 // temporary

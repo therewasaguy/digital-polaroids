@@ -36,13 +36,63 @@
 				<label class='alert' id='alertMsg'>Couldn't find that netId<br>(it should look something like abc123)</label>
 				<div id="description-holder">
 	      	<span class="help-block"><span id="userName"></span>
-	      	<br/>We'd like to take your animated portrait, and record you pronouncing your name.<br/>To get started, where do you come from?</span>
-	      	<textarea class="form-control" rows="4" name="location" id="description" placeholder="From where do you hail?" maxlength="50" autofocus></textarea>
+	      	<span class="small-font"><br/><br/>We'd like to take your animated portrait, and record your name pronounciation.<br/><br/>To get started, where do you come from?</span></span>
+	      	<input type="text" class="form-control" rows="1" name="location" id="description" placeholder="From where do you hail?" maxlength="50" autofocus>
+	      	<span class="small-font"><br/>If you have a nickname, enter it here:</span>
+					<input type="text" class="form-control" rows="1" name="nickname" id="nickname" placeholder="Enter Your Nickname">
 	      	<button class="btn btn-success" id="descButton">Continue to Your Portrait</button>
+	      	<button class="btn btn-success" id="viewMod">View/Modify Your Portrait</button>
+
 	      </div>
 			</div>
 	  </div>
 	</div>
+
+	<!-- homebase -->
+	<div id="homebase" style="display:none">
+    <div class="row centered full-height">
+			<!-- col 1 -->
+			<div class="col-lg-6 overlay overlay-left">
+
+				<div class="row centered padded">
+				</div>
+
+				<div class="row centered">
+					<h4>We got your</h4>
+					<h3>Portrait</h3>
+				</div>
+
+				<div class="row centered portrait-icon">
+						<img src="/img/assets/portrait_icon.png" style="visibility:hidden">
+				</div>
+
+				<div class="row centered" style="padding-top:20px">
+					<button class="btn btn-success tz">See it again</button>
+					<button id="home-rec-gif" class="btn btn-warning tz">Record a new GIF</button>
+				</div>
+
+			</div>
+
+			<!-- col 2 -->
+			<div class="col-lg-6 overlay overlay-right">
+				<div class="row centered padded">
+				</div>
+				<div class="row centered">
+					<h4>We need your</h4>
+					<h3>Pronounciation</h3>
+				</div>
+				<div class="row centered record-icon">
+					<img src="/img/assets/record_name.png" style="visibility:hidden">
+				</div>
+				<div class="row centered" style="padding-top:20px">
+					<button class="btn btn-success tz">Listen again</button>
+					<button id="home-rec-audio" class="btn btn-warning tz">Re-record</button>
+				</div>
+			</div>
+
+
+		</div> <!-- end row -->
+	</div> <!-- end homebase -->
 
 
 	<div id="level-meter"></div>
@@ -53,9 +103,7 @@
 
 <div id="portrait0">
 	<img class="addFrame" src="/img/frame01.png" >
-	<!-- <img class="small-portrait" src="https://s3.amazonaws.com/digitalpolaroids/1416259133370.gif"> -->
 	<video class="small-portrait" src="/webm/1416259133370.webm" autoplay loop>
-
 </div>
 
 <div id="portrait1">
@@ -79,7 +127,9 @@
 		<span class="help-block" id="help-text">processing...</span>
 	</div>
 </div>
-<div id='userId' data-userId=''></div>
+
+<!-- hidden div that stores user data -->
+<div id='userId' data-userId='' data-userPortrait='' data-userAudio=''></div>
 
 <script src="/js/vendor/msr/MediaStreamRecorder.js"></script>
 <script src="/js/gumhelper.js" defer></script>
