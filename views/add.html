@@ -3,25 +3,42 @@
 <div id="portrait-holder">
 	<img class="addFrame" src="/img/frame.png" >
 
+	<div id="video-cover"><h1 id="rec-instructions">Record your name pronounciation</h1></div>
+
 	<div id="video">
 		<div id="webcam-alert" class="alert alert-dismissable alert-warning">
 			<h4>Please enable your Webcam!</h4>
 			<p>Otherwise our magic cannot work here. Look in the top of this window.</p>
-	    </div>
+		</div>
 	</div>
 	<div id="gifContainer"></div>
 	<button class="btn btn-warning" id="capture">Record Your Portrait</button>
 	<button class="btn btn-success" id="save">Save Your Portrait</button>
-	<button class="btn btn-success" id="done">I'm Done Here</button>
+
+	<!-- <button class="btn btn-success" id="done">I'm Done Here</button> -->
+	<input class="btn btn-img-center" type="image" src="/img/assets/checkmark.png" id="done" alt="I'm Done Here" width="auto" height="auto">
+
 	<button class="btn btn-warning" id="reRecord">Or, Try Again</button>
 
-	<button class="btn btn-success" id="recAudioStart">Start Recording Audio</button>
-	<button class="btn btn-warning" id="recAudioStop">Stop Recording Audio</button>
-	<button class="btn btn-success" id="recAudioListen">Listen Audio</button>
-	<button class="btn btn-warning" id="recAudioSave">Save Audio</button>
-	<button class="btn btn-warning" id="recAudioAgain">Or, Try Again</button>
+	<!-- <button class="btn btn-success" id="recAudioStart">Start Recording Audio</button> -->
+	<input class="btn btn-img-center" type="image" src="/img/assets/Record_button.png" id="recAudioStart" alt="Record" width="auto" height="auto">
 
-	<audio src="" controls id="audioEl"></audio>
+	<input class="btn btn-img-center" type="image" src="/img/assets/Stop_button.png" id="recAudioStop" alt="Stop" width="auto" height="auto">
+
+	<!-- <button class="btn btn-warning" id="recAudioStop">Stop Recording Audio</button> -->
+
+	<!-- <button class="btn btn-success" id="recAudioListen">Listen Audio</button> -->
+	<input class="btn btn-img-center" type="image" src="/img/assets/play_button.png" id="recAudioListen" alt="Listen" width="auto">
+
+<!-- 	<button class="btn btn-warning" id="recAudioSave">Save Audio</button> -->
+	<input class="btn btn-img-right" type="image" src="/img/assets/checkmark.png" id="recAudioSave" alt="Save" width="auto">
+
+	<!-- <button class="btn btn-warning" id="recAudioAgain">Or, Try Again</button> -->
+	<input class="btn btn-img-left" type="image" src="/img/assets/Record_button.png" id="recAudioAgain" alt="Record" width="auto" height="auto">
+
+
+	<audio src="" id="audioEl"></audio>
+	<audio src="" id="audioPlayer"></audio>
 
 	<p id="counter">9</p>
 	<div class="progress" id="progressHolder">
@@ -36,7 +53,7 @@
 				<label class='alert' id='alertMsg'>Couldn't find that netId<br>(it should look something like abc123)</label>
 				<div id="description-holder">
 	      	<span class="help-block"><span id="userName"></span>
-	      	<span class="small-font"><br/><br/>We'd like to take your animated portrait, and record your name pronounciation.<br/><br/>To get started, where do you come from?</span></span>
+	      	<span class="small-font"><br/><br/>We'd like to take your animated portrait, and record your name pronounciation.<br/><br/><span id="locBlurb">To get started, from where do you hail?</span></span></span>
 	      	<input type="text" class="form-control" rows="1" name="location" id="description" placeholder="From where do you hail?" maxlength="50" autofocus>
 	      	<span class="small-font"><br/>If you have a nickname, enter it here:</span>
 					<input type="text" class="form-control" rows="1" name="nickname" id="nickname" placeholder="Enter Your Nickname">
@@ -49,44 +66,50 @@
 	</div>
 
 	<!-- homebase -->
-	<div id="homebase" style="display:none">
+	<div id="homebase" style="display: none;">
+		<div class="row centered-abs-text" style="position:absolute;">
+	    	<h4>Hi <span id="homebase-name">Dude</span>!</h4>
+		</div>
     <div class="row centered full-height">
 			<!-- col 1 -->
-			<div class="col-lg-6 overlay overlay-left">
+			<div class="col-xs-5 overlay overlay-left">
 
 				<div class="row centered padded">
 				</div>
 
 				<div class="row centered">
-					<h4>We got your</h4>
+					<h4>We <span id="hasVideo">need</span> your</h4>
 					<h3>Portrait</h3>
 				</div>
 
-				<div class="row centered portrait-icon">
-						<img src="/img/assets/portrait_icon.png" style="visibility:hidden">
+				<div class="portrait-preview">
+					<img class="prev-frame" src="/img/frame05.png">
+					<div class="row centered portrait-icon">
+							<img src="/img/assets/portrait_icon.png" style="visibility:hidden">
+							<video src="" class="video-sm" id="videoPlayer" autoplay loop></video>
+					</div>
 				</div>
-
 				<div class="row centered" style="padding-top:20px">
-					<button class="btn btn-success tz">See it again</button>
-					<button id="home-rec-gif" class="btn btn-warning tz">Record a new GIF</button>
+					<button class="btn btn-success tz" id="viewAgain" style="display: none; z-index:1000">See it big</button>
+					<button id="home-rec-gif" class="btn btn-warning tz">Record GIF</button>
 				</div>
 
 			</div>
 
 			<!-- col 2 -->
-			<div class="col-lg-6 overlay overlay-right">
+			<div class="col-xs-5 overlay overlay-right">
 				<div class="row centered padded">
 				</div>
 				<div class="row centered">
-					<h4>We need your</h4>
+					<h4>We <span id="hasAudio">need</span> your</h4>
 					<h3>Pronounciation</h3>
 				</div>
-				<div class="row centered record-icon">
+				<div class="row centered record-icon" id="audioIcon">
 					<img src="/img/assets/record_name.png" style="visibility:hidden">
 				</div>
 				<div class="row centered" style="padding-top:20px">
-					<button class="btn btn-success tz">Listen again</button>
-					<button id="home-rec-audio" class="btn btn-warning tz">Re-record</button>
+					<button class="btn btn-success tz" id="listenAgain" style="display: none;">Listen Again</button>
+					<button id="home-rec-audio" class="btn btn-warning tz">Record Audio</button>
 				</div>
 			</div>
 
@@ -129,7 +152,7 @@
 </div>
 
 <!-- hidden div that stores user data -->
-<div id='userId' data-userId='' data-userPortrait='' data-userAudio=''></div>
+<div id='userId' data-userId='' data-userNickname='' data-userPortrait='' data-userAudio=''></div>
 
 <script src="/js/vendor/msr/MediaStreamRecorder.js"></script>
 <script src="/js/gumhelper.js" defer></script>

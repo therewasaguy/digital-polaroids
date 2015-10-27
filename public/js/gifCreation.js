@@ -21,7 +21,7 @@ function init() {
 
 	//document.getElementById('save').addEventListener('click', postGif);
 	document.getElementById('reRecord').addEventListener('click',reStart); 
-	document.getElementById('done').addEventListener('click', prepareToRecordAudio); 
+	document.getElementById('done').addEventListener('click', doneMakingGif); 
 	document.getElementById('netId').addEventListener('change', submitId);
 	document.getElementById('descButton').addEventListener('click',submitDescription);
 
@@ -50,6 +50,7 @@ function init() {
 	function startGifCapture() {
 		
 		shooter.getShot(onFrameCaptured, 30, 0.2, function onProgress(progress) {
+			// console.log(progress);
 			// show counter and progress
 			document.getElementById('counter').style.display = 'block';
 			document.getElementById('progressHolder').style.display = 'block';
@@ -60,7 +61,7 @@ function init() {
 			document.getElementById('capture').innerHTML = "We're recording...";
 			
 			if((progress*100)%1 === 0){
-				var count = 10-(progress*80);
+				var count = 10-(progress*10);
 				document.getElementById('counter').innerHTML = count;
 				document.getElementById('counter').style.opacity = '0.8';
 			}
@@ -161,6 +162,8 @@ function postGif (){
 	  url: "/api/add/photo",
 	  data: {image_gif:gif,userId:userId},
 	  success: function (response) {
+	  	var webmPath = response.webm;
+	  	userDiv.setAttribute('data-userPortrait', webmPath);
 	    document.getElementById('loader').style.display = 'none';
 	    //document.getElementById('save').style.display = 'none';
 	    document.getElementById('done').style.display = 'block';
@@ -180,32 +183,93 @@ function submitId(){
 				document.getElementById('welcome').style.zIndex ='0';
 				return;
 			}
-			var portrait = response.user.webm;
-			var audioPron = response.user.audio;
+			var portrait = response.user.webm || '';
+			var audioPron = response.user.audio || '';
 			var userLoc = response.user.location;
-			console.log(response.user);
+			var nickname = response.user.nickname;
 
-			// set the id on the page
-			document.getElementById('userId').setAttribute('data-userId', response.user.netId);
-			document.getElementById('userId').setAttribute('data-userAudio', response.user.audio);
-			document.getElementById('userId').setAttribute('data-userPortrait', response.user.webm);
+			console.log(portrait)
 
-			// hide id field, show description field
-			document.getElementById('netId').style.display = 'none';
-			document.getElementById('alertMsg').style.display = 'none';
-			document.getElementById('welcome').style.zIndex ='0';
-			document.getElementById('desc-holder').style.top = '5%';
-			document.getElementById('description-holder').style.display = 'block';
-			document.getElementById('description').focus();
-			document.getElementById('userName').innerHTML = 'Hi, ' + response.user.name.firstName + " " + response.user.name.lastName + "!";
-			$('#description').val(response.user.location);
-			$('#nickname').val(response.user.nickname);
+			// assign user data to a div's data-attributes on the page
+			var userDiv = document.getElementById('userId');
+			userDiv.setAttribute('data-userId', response.user.netId);
+			userDiv.setAttribute('data-userAudio', audioPron);
+			userDiv.setAttribute('data-userPortrait', portrait);
+			userDiv.setAttribute('data-userNickname', response.user.nickname || '');
+			userDiv.setAttribute('data-userFirst', response.user.name.firstName);
+			userDiv.setAttribute('data-userLast', response.user.name.lastName);
+
+			// direct user to fill out any missing info:
+
+			// if user has no location
+			if (typeof(userLoc) == 'undefined' || userLoc.length == 0) {
+				viewLoadDescription(response.user);
+			}
+
+			// if user has location but no nickname
+			else if (typeof(nickname) == 'undefined' || nickname.length == 0) {
+				viewLoadNickname(response.user);
+			}
+
+			// if user has portrait but no audio
+			else if ( (typeof(portrait) !== 'undefined' || portrait.indexOf('webm') > -1) && typeof(audioPron) == 'undefined' || audioPron.indexOf('mp3') == -1) {
+				console.log('user has portrait but no audio');
+				// prepareToRecordAudio();
+				viewLoadHomeBase();
+			}
+
+			// if user has portrait and audio
+			else  {
+				console.log('user has portrait and audio');
+				viewLoadHomeBase();
+			}
 
 		},
 		failure: function (response){
 			document.getElementById('alertMsg').style.display = 'block';
 		}
 	});	
+}
+
+// load the view to get user's location and nickname
+function viewLoadDescription(user) {
+	// hide id field, show description field
+	document.getElementById('netId').style.display = 'none';
+	document.getElementById('alertMsg').style.display = 'none';
+	document.getElementById('welcome').style.zIndex ='0';
+	document.getElementById('desc-holder').style.top = '5%';
+	document.getElementById('description-holder').style.display = 'block';
+	document.getElementById('description').focus();
+	document.getElementById('userName').innerHTML = 'Hi, ' + user.name.firstName + " " + user.name.lastName + "!";
+	$('#description').val(user.location);
+	$('#nickname').val(user.nickname);
+}
+
+function viewLoadNickname(user) {
+	document.getElementById('netId').style.display = 'none';
+	document.getElementById('alertMsg').style.display = 'none';
+	document.getElementById('welcome').style.zIndex ='0';
+	document.getElementById('desc-holder').style.top = '5%';
+	document.getElementById('description-holder').style.display = 'block';
+	document.getElementById('description').style.display = 'none';
+	document.getElementById('locBlurb').style.display = 'none';
+	document.getElementById('userName').innerHTML = 'Hi, ' + user.name.firstName + " " + user.name.lastName + "!";
+	$('#description').val(user.location);
+	$('#nickname').val(user.nickname);
+
+	// to do: change what the next button does
+
+}
+
+// on GIF completion take user to homebase or to record audio
+function doneMakingGif() {
+	var audioPron = document.getElementById('userId').getAttribute('data-userAudio');
+	if (audioPron.indexOf('mp3') == -1) {
+		prepareToRecordAudio();
+	} else {
+		viewLoadHomeBase();
+	}
+
 }
 
 function prepareToRecordGif() {
@@ -229,8 +293,11 @@ function submitDescription (){
 	var userAudio = userDiv.getAttribute('data-userAudio');
 	var userPortrait = userDiv.getAttribute('data-userPortrait');
 
+	var hasWebM = false;
+
 	if (userPortrait.indexOf('webm') > 0) {
 		console.log('user has webm');
+		hasWebM = true;
 	} else {console.log('user needs webm')}
 
 	if (userAudio.indexOf('mp3') > 0) {
@@ -248,9 +315,15 @@ function submitDescription (){
 			},
 			success: function (response) {
 				document.getElementById('welcome').style.display = 'none';
+				
+				if (hasWebM) {
+					viewLoadHomeBase();
+				} else {
+					document.getElementById('capture').style.display = "block";
+				}
+
 			}
 		});
-		document.getElementById('capture').style.display = "block";
 	} else {
 		var pHolder = $('#description')[0].placeholder;
 		if ( pHolder.indexOf("From") > -1) {
@@ -259,6 +332,76 @@ function submitDescription (){
 			$('#description')[0].placeholder += '?';
 		}
 	}
+}
+
+function viewLoadHomeBase() {
+	document.getElementById('recAudioAgain').style.display = 'none';
+	document.getElementById('recAudioListen').style.display = 'none';
+	document.getElementById('recAudioSave').style.display = 'none';
+	document.getElementById('done').style.display = 'none';
+	document.getElementById('reRecord').style.display = 'none';
+
+
+	document.getElementById('homebase').style.display = 'block';
+
+	// Check if user has audio / video and fill in spans accordingly
+	var userDiv = document.getElementById('userId');
+	var audioPron = userDiv.getAttribute('data-userAudio');
+	var portrait = userDiv.getAttribute('data-userPortrait');
+	var audioPlayer = document.getElementById('audioPlayer');
+	var videoPlayer = document.getElementById('videoPlayer');
+	var name = userDiv.getAttribute('data-usernickname').length > 0 ? userDiv.getAttribute('data-usernickname') : userDiv.getAttribute('data-userfirst')
+
+	document.addEventListener('click', function() {
+		if (videoPlayer.className.indexOf('video-sm') == -1) {
+			videoPlayer.className = 'video-sm';
+		}
+	});
+
+	document.getElementById('homebase-name').innerText = name;
+
+	// if user has audio...
+	if (audioPron.indexOf('mp3') > -1) {
+		audioPlayer.src = audioPron
+
+		// if we havent already set event listeners...
+		if (document.getElementById('hasAudio').innerText != 'got') {
+			document.getElementById('hasAudio').innerText = 'got';
+
+			var listenButton = 	document.getElementById('listenAgain');
+			listenButton.style.display = 'block';
+			listenButton.addEventListener('click', function() {
+				audioPlayer.play();
+			});
+
+			document.getElementById('audioIcon').addEventListener('click', function() {
+				audioPlayer.play();
+			});
+		}
+	}
+
+	// if user has video...
+	if (portrait.indexOf('webm') > -1) {
+		videoPlayer.src = portrait;
+
+		// if we havent already set event listeners...
+		if (document.getElementById('hasVideo').innerText != 'got') {
+			document.getElementById('hasVideo').innerText = 'got';
+			var viewButton = 	document.getElementById('viewAgain');
+			viewButton.style.display = 'block';
+			viewButton.addEventListener('click', function(e) {
+				if (videoPlayer.className.indexOf('video-big') == -1) {
+					videoPlayer.className = 'video-big';
+				} else if ( videoPlayer.className.indexOf('video-sm') == -1) {
+						videoPlayer.className = 'video-sm';
+				}
+				e.stopPropagation();
+				e.preventDefault();
+			});
+		}
+
+	}
+
 }
 
 function preparePortraits(){

@@ -14,6 +14,8 @@ function initAudio() {
 	document.getElementById('recAudioStart').addEventListener('click', recordAudio); 
 	document.getElementById('recAudioAgain').addEventListener('click', recordAudio); 
 	document.getElementById('recAudioListen').addEventListener('click', playAudio);
+	document.getElementById('recAudioSave').addEventListener('click', endAudioSession);
+
 	audioEl.onpause = function() {
 		window.clearInterval(playbackVizLoop);
 		playbackVizLoop = null;
@@ -28,6 +30,8 @@ function initAudio() {
 		document.getElementById('reRecord').style.display = 'none';
 		document.getElementById('homebase').style.display = 'none';
 		document.getElementById('welcome').style.display = 'none';
+
+		document.getElementById('video-cover').className = 'cover-vid';
 
 		audioEl.style.display = 'none';
 		document.getElementById('recAudioStart').style.display = 'block';
@@ -83,7 +87,13 @@ function initAudio() {
 	// callback to change the view once audio has been recorded
 	function onStopRecordingAudioCallback(blobURL) {
 		console.log('hi');
+		var audioPlayer = document.getElementById('audioPlayer');
+		audioPlayer.src = blobURL;
+
+		// redundant / unnecessary?
 		audioEl.src = blobURL;
+
+		setUserAudioOnPage(blobURL);
 		// audioEl.style.display = 'block';
 
 		// hide buttons and stuff
@@ -96,6 +106,8 @@ function initAudio() {
 		// show preview, re-record and save buttons
 		document.getElementById('recAudioListen').style.display = 'block';
 		document.getElementById('recAudioAgain').style.display = 'block';
+		document.getElementById('recAudioSave').style.display = 'block';
+
 	}
 
 	function playAudio() {
@@ -172,10 +184,14 @@ function initAudio() {
 		}, 60);
 	}
 
-	function postWav(soundBlob) {
-		// document.getElementById('loader').style.display = 'block'
-		// document.getElementById('help-text').innerHTML = "saving...";
+	// save the user audio url so we can hear it later. Also saved as audioEl.src
+	function setUserAudioOnPage(audioBlob) {
+		var userDiv = document.getElementById('userId');
+		userDiv.setAttribute('data-userAudio', audioBlob);
+		console.log('set user audio');
+	}
 
+	function postWav(soundBlob) {
 		var userDiv = document.getElementById('userId');
 		var userId = userDiv.getAttribute('data-userId');
 
@@ -189,7 +205,16 @@ function initAudio() {
 		});
 
 	}
+
+
+	// take user to homebase and hide other buttons
+	function endAudioSession() {
+		document.getElementById('video-cover').className = '';
+		viewLoadHomeBase();
+	}
+
 }
+
 
 window.addEventListener('DOMContentLoaded', initAudio);
 

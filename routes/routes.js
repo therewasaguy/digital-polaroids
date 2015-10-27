@@ -126,7 +126,7 @@ exports.savePhotoToDb = function(req,res){
 					Person.findOneAndUpdateQ({netId:netId}, { $set: dataToSave})
 					.then(function(response){
 					  console.log('user updated! ' + response);
-					  res.json({status:'success'}); 
+					  res.json({status:'success', webm: dataToSave.webm}); 
 					})
 					.fail(function (err) { 
 						console.log('error in updating user! ' + err)
@@ -374,8 +374,8 @@ exports.createUsers = function(req,res){
 	var csv = require('fast-csv');
 
 	// var stream = fs.createReadStream("all-students-20141024.csv");
-	// var stream = fs.createReadStream('test.csv');
-	var stream = fs.createReadStream('allstudents2015-2016.csv');
+	// var stream = fs.createReadStream('test2.csv');
+	// var stream = fs.createReadStream('allstudents2015-2016.csv');
 
 	var csvStream = csv()
     .on("data", function(data){
@@ -392,16 +392,20 @@ exports.createUsers = function(req,res){
 
          var person = Person(dataToSave);
 
-         // save the person to db
-         person.saveQ()
-				 .then(function (response){ 
-				 	console.log(response);
-				  })
-				  .fail(function (err) { console.log(err); })
-				  .done();         
-		    })
-	    .on("end", function(){
-	         console.log("done");
+         Person.find({netId: netId}, function(err, data) {
+					if (data.length == 0) {
+						// save the person to db
+						person.saveQ()
+						.then(function (response){ 
+							console.log(response);
+						 })
+						 .fail(function (err) { console.log(err); })
+						 .done();
+					}
+				});
+		})
+		.on("end", function(){
+			console.log("done");
     });
 
     stream.pipe(csvStream);
