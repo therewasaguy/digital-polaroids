@@ -5,6 +5,8 @@
 // ______________________
 // MediaStreamRecorder.js
 
+/** modified by Jason Sigal to allow .wav encoding instead of strictly .ogg in Firefox **/
+
 function MediaStreamRecorder(mediaStream) {
     if (!mediaStream) throw 'MediaStream is mandatory.';
 
@@ -13,7 +15,10 @@ function MediaStreamRecorder(mediaStream) {
     this.start = function(timeSlice) {
         // Media Stream Recording API has not been implemented in chrome yet;
         // That's why using WebAudio API to record stereo audio in WAV format
-        var Recorder = IsChrome ? window.StereoRecorder : window.MediaRecorderWrapper;
+
+        // MODIFICATION so that we can encode .wav using web audio API rather than rely on Mozilla's native MediaRecorder:
+        // var Recorder = IsChrome ? window.StereoRecorder : window.MediaRecorderWrapper;
+        var Recorder = window.StereoRecorder;
 
         // video recorder (in WebM format)
         if (this.mimeType.indexOf('video') != -1) {
@@ -142,7 +147,7 @@ var ObjectStore = {
 function MediaRecorderWrapper(mediaStream) {
     // if user chosen only audio option; and he tried to pass MediaStream with
     // both audio and video tracks;
-    // using a dirty workaround to generate audio-only stream so that we can get audio/ogg output.
+    // using a dirty workaround to generate audio-only stream so that we can get audio/wav output.
     if (this.type == 'audio' && mediaStream.getVideoTracks && mediaStream.getVideoTracks().length && !navigator.mozGetUserMedia) {
         var context = new AudioContext();
         var mediaStreamSource = context.createMediaStreamSource(mediaStream);
@@ -179,7 +184,7 @@ function MediaRecorderWrapper(mediaStream) {
 
                 // at this stage, Firefox MediaRecorder API doesn't allow to choose the output mimeType format!
                 var blob = new window.Blob([e.data], {
-                    type: e.data.type || self.mimeType || 'audio/ogg' // It specifies the container format as well as the audio and video capture formats.
+                    type: e.data.type || self.mimeType || 'audio/wav' // It specifies the container format as well as the audio and video capture formats.
                 });
 
                 // Dispatching OnDataAvailable Handler
@@ -190,8 +195,7 @@ function MediaRecorderWrapper(mediaStream) {
                 // for video recording on Firefox, it will be fired quickly.
                 // because work on VideoFrameContainer is still in progress
                 // https://wiki.mozilla.org/Gecko:MediaRecorder
-
-                // self.onstop(error);
+                //self.onstop(error);
             };
 
             // http://www.w3.org/TR/2012/WD-dom-20121206/#error-names-table
@@ -227,8 +231,10 @@ function MediaRecorderWrapper(mediaStream) {
             // If timeSlice isn't provided, UA should call the RequestData to obtain the Blob data, also set the mTimeSlice to zero.
 
             setTimeout(function() {
-                mediaRecorder.stop();
-                startRecording();
+                if(!isStopRecording && mediaRecorder){
+                    mediaRecorder.stop();
+                    startRecording();
+                }
             }, mTimeSlice);
         }
 
@@ -240,6 +246,7 @@ function MediaRecorderWrapper(mediaStream) {
 
     this.stop = function() {
         isStopRecording = true;
+        mediaRecorder.stop();
 
         if (self.onstop) {
             self.onstop({});
@@ -252,7 +259,7 @@ function MediaRecorderWrapper(mediaStream) {
     var self = this;
 
     if (!self.mimeType && !!mediaStream.getAudioTracks) {
-        self.mimeType = mediaStream.getAudioTracks().length && mediaStream.getVideoTracks().length ? 'video/webm' : 'audio/ogg';
+        self.mimeType = mediaStream.getAudioTracks().length && mediaStream.getVideoTracks().length ? 'video/webm' : 'audio/wav';
     }
 
     // Reference to "MediaRecorderWrapper" object
@@ -569,6 +576,7 @@ function WhammyRecorderHelper(mediaStream, root) {
 
     var requestDataInvoked = false;
     this.requestData = function() {
+        console.log('requesting data');
         if (!frames.length) {
             requestDataInvoked = false;
             return;
@@ -1301,7 +1309,7 @@ function MultiStreamRecorder(mediaStream) {
         audioRecorder = new MediaStreamRecorder(mediaStream);
         videoRecorder = new MediaStreamRecorder(mediaStream);
 
-        audioRecorder.mimeType = 'audio/ogg';
+        audioRecorder.mimeType = 'audio/wav';
         videoRecorder.mimeType = 'video/webm';
 
         for (var prop in this) {
