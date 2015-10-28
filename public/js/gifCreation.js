@@ -452,10 +452,17 @@ function detectBrowser() {
 
 	var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
 
-	console.log('opera', isOpera);
-	console.log('chrome', isChrome);
-	console.log('IE', isIE);
-	console.log('FF', isFirefox);
-	console.log('Safari', isSafari);
+	// console.log('opera', isOpera);
+	// console.log('chrome', isChrome);
+	// console.log('IE', isIE);
+	// console.log('FF', isFirefox);
+	// console.log('Safari', isSafari);
+
+	if (!isOpera && !isChrome && !isFirefox) {
+		var browserName = 'Your browser';
+		if (isIE) browserName = 'Internet Explorer';
+		if (isSafari) browserName = 'Safari';
+		alert(browserName + ' does not allow access to the camera and microphone. Please try again in a different browser. Supported browsers include Chrome, Firefox, Opera.')
+	}
 
 }
