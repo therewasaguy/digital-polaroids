@@ -452,6 +452,16 @@ function detectBrowser() {
 
 	var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
 
+	var isIOS = /iPad|iPhone|iPod/.test(navigator.platform);
+
+	function getAndroidVersion(ua) {
+	    ua = (ua || navigator.userAgent).toLowerCase(); 
+	    var match = ua.match(/android\s([0-9\.]*)/);
+	    return match ? match[1] : false;
+	};
+
+	var isAndroidVersion = getAndroidVersion();
+
 	// console.log('opera', isOpera);
 	// console.log('chrome', isChrome);
 	// console.log('IE', isIE);
@@ -462,7 +472,11 @@ function detectBrowser() {
 		var browserName = 'Your browser';
 		if (isIE) browserName = 'Internet Explorer';
 		if (isSafari) browserName = 'Safari';
-		alert(browserName + ' does not allow access to the camera and microphone. Please try again in a different browser. Supported browsers include Chrome, Firefox, Opera.')
+		if (isIOS) browserName = 'iOS'
+		if (isAndroidVersion) && (parseFloat(isAndroidVersion) < 5) {
+			alert('This app is not compatible with Android version ' + isAndroidVersion +'. Please try again in a different browser. Well-supported browsers include desktop Chrome, Firefox, Opera. ')
+		} else {
+			alert(browserName + ' does not allow access to the camera and microphone. Please try again in a different browser. Well-supported browsers include desktop Chrome, Firefox, Opera.')
+		}
 	}
-
 }
