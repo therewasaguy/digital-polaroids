@@ -294,7 +294,7 @@ function prepareToRecordGif() {
 	document.getElementById('reRecord').style.display = 'none';
 	document.getElementById('homebase').style.display = 'none';
 	document.getElementById('welcome').style.display = 'none';
-
+	// document.getElementById('generatedGif')
 	document.getElementById('capture').style.display = "block";
 
 }
@@ -377,8 +377,8 @@ function viewLoadHomeBase() {
 
 	document.getElementById('homebase-name').textContent = name;
 
-	// if user has audio...
-	if (audioPron.indexOf('mp3') > -1) {
+	// if user has audio, it will either be 'mp3' or 'blob' but not empty string like ''
+	if ( (audioPron.indexOf('mp3') > -1) || audioPron.indexOf('blob')  > -1) {
 		audioPlayer.src = audioPron
 
 		// if we havent already set event listeners...
@@ -473,7 +473,7 @@ function detectBrowser() {
 		if (isIE) browserName = 'Internet Explorer';
 		if (isSafari) browserName = 'Safari';
 		if (isIOS) browserName = 'iOS'
-		if (isAndroidVersion) && (parseFloat(isAndroidVersion) < 5) {
+		if ( (isAndroidVersion) && (parseFloat(isAndroidVersion) < 5 ) ) {
 			alert('This app is not compatible with Android version ' + isAndroidVersion +'. Please try again in a different browser. Well-supported browsers include desktop Chrome, Firefox, Opera. ')
 		} else {
 			alert(browserName + ' does not allow access to the camera and microphone. Please try again in a different browser. Well-supported browsers include desktop Chrome, Firefox, Opera.')
