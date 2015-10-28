@@ -1,6 +1,6 @@
 var mediaRecorder;
 var mediaStream, amp;
-
+var audioPermissionGranted = false;
 
 function initAudio() {
 
@@ -9,6 +9,10 @@ function initAudio() {
 	var maxRecordingTime = 7;// seconds
 	var recordingStartedTime;
 	var timerLoop, playbackVizLoop;
+
+	// --> audioPermissionGranted (will not fire in FireFox and so we can call it again later)
+	window.navigator.getUserMedia( {'audio':true, 'video': false}, onMediaSuccess, onMediaError);
+
 
 	// add event listners
 	document.getElementById('recAudioStart').addEventListener('click', recordAudio); 
@@ -23,9 +27,13 @@ function initAudio() {
 
 	}
 
-	window.navigator.getUserMedia( {'audio':true}, onMediaSuccess, onMediaError);
 
 	window.prepareToRecordAudio = function() {
+
+		if (!audioPermissionGranted) {
+			window.navigator.getUserMedia( {'audio':true, 'video': false}, onMediaSuccess, onMediaError);
+		}
+
 		document.getElementById('done').style.display = 'none';
 		document.getElementById('reRecord').style.display = 'none';
 		document.getElementById('homebase').style.display = 'none';
@@ -38,8 +46,9 @@ function initAudio() {
 	}
 
 	function recordAudio() {
+		console.log('rec audio!');
 		mediaRecorder = new MediaStreamRecorder(stream);
-		mediaRecorder.mimeType = 'audio/ogg';
+		mediaRecorder.mimeType = 'audio/wav';
 		mediaRecorder.audioChannels = 1;
 		// document.getElementById('capture').style.pointerEvents = "none";
 		document.getElementById('capture').style.display = "none";
@@ -54,24 +63,27 @@ function initAudio() {
 
 		audioEl.pause();
 
+		recordingStartedTime = window.performance.now();
+
+		// mediaRecorder.onstop = function(e) {
+		// 	console.log(mediaRecorder.stream);
+		// }
+		// 
 		mediaRecorder.ondataavailable = function(blob) {
-			console.log('blob data');
 			var audioBlob = blob;
+
+			// TO DO: (for Firefox)
+			// if blob is .ogg, save it as-is, but if .wav, convert it
 
 			// upload the blob as data
 			makeWavFromBlob(audioBlob);
 
-			mediaRecorder.stop();
-
 			// create audio element on the page for previewing
 			var blobURL = URL.createObjectURL(audioBlob);
 			onStopRecordingAudioCallback(blobURL);
-
 		};
 
-		recordingStartedTime = window.performance.now();
 		mediaRecorder.start( (maxRecordingTime + 4000) * 1000 );
-
 		startTimer();
 	}
 
@@ -86,11 +98,12 @@ function initAudio() {
 
 	// callback to change the view once audio has been recorded
 	function onStopRecordingAudioCallback(blobURL) {
-		console.log('hi');
+
+		// store the audio in three places (which are redundant / unnecessary?)
 		var audioPlayer = document.getElementById('audioPlayer');
 		audioPlayer.src = blobURL;
-
-		// redundant / unnecessary?
+		var userDiv = document.getElementById('userId');
+		userDiv.setAttribute('data-userAudio', blobURL);
 		audioEl.src = blobURL;
 
 		setUserAudioOnPage(blobURL);
@@ -128,6 +141,8 @@ function initAudio() {
 
 	// connect input audio stream to measure amplitude
 	function onMediaSuccess(_stream) {
+		audioPermissionGranted = true;
+
 		stream = _stream;
 		amp = new p5.Amplitude();
 		mediaStream = amp.audiocontext.createMediaStreamSource(stream);
@@ -153,7 +168,7 @@ function initAudio() {
 			// upload the blob
 			postWav(base64);
 		};
-
+		console.log(blob);
 		reader.readAsDataURL(blob);
 
 		// blobToBase64(blobURL, postWav)
@@ -169,7 +184,7 @@ function initAudio() {
 		timerLoop = setInterval(function(){
 			var elapsedTime = (window.performance.now() - recordingStartedTime) / 1000;
 			var recPercentage = elapsedTime / maxRecordingTime * 100;
-			console.log(recPercentage);
+			// console.log(recPercentage);
 			// countValue = countValue - 0.1;
 			counter.innerHTML = Math.floor(elapsedTime*10) / 10;
 
@@ -217,28 +232,3 @@ function initAudio() {
 
 
 window.addEventListener('DOMContentLoaded', initAudio);
-
-// audio blob builder
-// via http://stackoverflow.com/questions/15970729/appending-blob-data
-// var MyBlobBuilder = function() {
-//   this.parts = [];
-// }
-
-// MyBlobBuilder.prototype.append = function(part) {
-//   this.parts.push(part);
-//   this.blob = undefined; // Invalidate the blob
-// };
-
-// MyBlobBuilder.prototype.getBlob = function() {
-//   if (typeof(this.blob) == 'undefined') {
-//     this.blob = new Blob(this.parts, { type: "audio/ogg" });
-//   }
-//   return this.blob;
-// };
-
-// MyBlobBuilder.prototype.clear = function() {
-// 	this.parts = [];
-// 	this.blob = undefined;
-// };
-
-// var audioBlobBuilder = new MyBlobBuilder();

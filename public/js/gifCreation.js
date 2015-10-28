@@ -1,5 +1,7 @@
 function init() {
 
+	detectBrowser();
+
 	//preparePortraits();
 
 	var videoContainer = document.getElementById('video');
@@ -24,6 +26,11 @@ function init() {
 	document.getElementById('done').addEventListener('click', doneMakingGif); 
 	document.getElementById('netId').addEventListener('change', submitId);
 	document.getElementById('descButton').addEventListener('click',submitDescription);
+
+	document.getElementById('homebase-name').addEventListener('click', function() {
+		console.log('clicked hb!');
+		viewLoadDescription();
+	});
 
 	GumHelper.startVideoStreaming(function(error, stream, videoEl, width, height) {
 		if(error) {
@@ -193,6 +200,7 @@ function submitId(){
 			// assign user data to a div's data-attributes on the page
 			var userDiv = document.getElementById('userId');
 			userDiv.setAttribute('data-userId', response.user.netId);
+			userDiv.setAttribute('data-user-loc', response.user.location);
 			userDiv.setAttribute('data-userAudio', audioPron);
 			userDiv.setAttribute('data-userPortrait', portrait);
 			userDiv.setAttribute('data-userNickname', response.user.nickname || '');
@@ -233,16 +241,25 @@ function submitId(){
 
 // load the view to get user's location and nickname
 function viewLoadDescription(user) {
+	var userDiv = document.getElementById('userId');
+
+	var firstName = typeof(user) != 'undefined' ? user.name.firstName : userDiv.getAttribute('data-userfirst');
+	var lastName = typeof(user) != 'undefined' ? user.name.lastName : userDiv.getAttribute('data-userlast');
+	var nickname = typeof(user) != 'undefined' ? user.nickname : userDiv.getAttribute('data-usernickname');
+	var location = typeof(user) != 'undefined' ? user.location : userDiv.getAttribute('data-user-loc');
+
+
 	// hide id field, show description field
+	document.getElementById('homebase').style.display = 'none';
 	document.getElementById('netId').style.display = 'none';
 	document.getElementById('alertMsg').style.display = 'none';
 	document.getElementById('welcome').style.zIndex ='0';
 	document.getElementById('desc-holder').style.top = '5%';
 	document.getElementById('description-holder').style.display = 'block';
 	document.getElementById('description').focus();
-	document.getElementById('userName').innerHTML = 'Hi, ' + user.name.firstName + " " + user.name.lastName + "!";
-	$('#description').val(user.location);
-	$('#nickname').val(user.nickname);
+	document.getElementById('userName').innerHTML = 'Hi, ' + firstName + " " + lastName + "!";
+	$('#description').val(location);
+	$('#nickname').val(nickname);
 }
 
 function viewLoadNickname(user) {
@@ -358,7 +375,7 @@ function viewLoadHomeBase() {
 		}
 	});
 
-	document.getElementById('homebase-name').innerText = name;
+	document.getElementById('homebase-name').textContent = name;
 
 	// if user has audio...
 	if (audioPron.indexOf('mp3') > -1) {
@@ -417,4 +434,28 @@ function preparePortraits(){
 			}	
 
 		});	
+}
+
+function detectBrowser() {
+	var browser = null;
+
+	var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+
+	    // Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
+
+	var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+
+	var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+	    // At least Safari 3+: "[object HTMLElementConstructor]"
+
+	var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
+
+	var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+
+	console.log('opera', isOpera);
+	console.log('chrome', isChrome);
+	console.log('IE', isIE);
+	console.log('FF', isFirefox);
+	console.log('Safari', isSafari);
+
 }
